@@ -307,7 +307,6 @@ POSSIBILITY OF SUCH DAMAGES.
       <plugin id="org.elbe.relations.data" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.derby" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.help" autoStart="false" startLevel="4" />
-      <plugin id="org.elbe.relations.help.base" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.indexer.lucene" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.mysql" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.print.dft" autoStart="false" startLevel="4" />
