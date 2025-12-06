@@ -9,4 +9,5 @@ Source code for the Relations Application, based on Eclipse e4 RCP.
 - `mvn clean verify`
 
 Project page: http://sourceforge.net/projects/relations-rcp/ 
+
 Project documentation: http://relations-rcp.sourceforge.net/
