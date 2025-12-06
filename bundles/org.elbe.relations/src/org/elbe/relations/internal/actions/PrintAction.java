@@ -1,0 +1,185 @@
+/***************************************************************************
+ * This package is part of Relations application.
+ * Copyright (C) 2004-2016, Benno Luthiger
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ***************************************************************************/
+package org.elbe.relations.internal.actions;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.elbe.relations.RelationsMessages;
+import org.elbe.relations.data.bom.IItem;
+import org.elbe.relations.internal.controller.PrintOutManager;
+import org.elbe.relations.internal.wizards.PrintOutWizard;
+import org.elbe.relations.services.IBrowserManager;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+/** Action to start the print out of selected content.
+ *
+ * @author Luthiger */
+@SuppressWarnings("restriction")
+public class PrintAction implements ICommand {
+
+    @Inject
+    private IEclipseContext context;
+
+    @Inject
+    @Named(IServiceConstants.ACTIVE_SHELL)
+    private Shell shell;
+
+    @Inject
+    private PrintOutManager printOutManager;
+
+    @Inject
+    private IBrowserManager browserManager;
+
+    @Inject
+    private Logger log;
+
+    @Override
+    public void execute() {
+        final PrintOutWizard lWizard = ContextInjectionFactory
+                .make(PrintOutWizard.class, this.context);
+        final WizardDialog lDialog = new WizardDialog(this.shell, lWizard);
+        lDialog.setMinimumPageSize(530, 270);
+        if (lDialog.open() == Window.OK) {
+            if (lWizard.isInitNew()) {
+                if (!this.printOutManager.initNew(lWizard.getPrintOutFileName(),
+                        lWizard.getPrintOutPlugin())) {
+                    return;
+                }
+            } else {
+                if (!this.printOutManager
+                        .initFurther(lWizard.getPrintOutFileName())) {
+                    return;
+                }
+            }
+            this.printOutManager.setContentScope(lWizard.getPrintOutScope());
+            this.printOutManager
+            .setPrintOutReferences(lWizard.getPrintOutReferences());
+
+            final PrintJob lJob = new PrintJob(this.printOutManager,
+                    this.browserManager.getSelectedModel());
+            final ProgressMonitorDialog lMonitor = new ProgressMonitorDialog(
+                    this.shell);
+            lMonitor.open();
+            try {
+                lMonitor.run(true, true, lJob);
+            } catch (final InvocationTargetException exc) {
+                this.log.error(exc, exc.getMessage());
+            } catch (final InterruptedException exc) {
+                this.log.error(exc, exc.getMessage());
+            } finally {
+                lMonitor.close();
+            }
+        }
+    }
+
+    // --- inner classes ---
+
+    private class PrintJob implements IRunnableWithProgress {
+        private final PrintOutManager printManager;
+        private final IItem selectedItem;
+
+        public PrintJob(final PrintOutManager inManager,
+                final IItem inSelected) {
+            this.printManager = inManager;
+            this.selectedItem = inSelected;
+        }
+
+        @Override
+        public void run(final IProgressMonitor inMonitor) {
+            Collection<IItem> lItems;
+            try {
+                lItems = this.printManager.getItemSet(this.selectedItem);
+                final SubMonitor lProgress = SubMonitor.convert(inMonitor,
+                        lItems.size());
+                lProgress.beginTask(
+                        RelationsMessages.getString("PrintAction.job.start"), //$NON-NLS-1$
+                        lItems.size());
+                int lNumberOfPrinted = 0;
+                for (final IItem lItem : lItems) {
+                    lNumberOfPrinted += this.printManager.printItem(lItem);
+                    lProgress.worked(1);
+                }
+
+                // give feedback
+                giveFeedback(getPrintCompleteAction(lNumberOfPrinted));
+            } catch (final Exception exc) {
+                final String lErrorMsg = exc.getMessage();
+                giveFeedback(getErrorMsgAction(lErrorMsg));
+                PrintAction.this.log.error(exc, exc.getMessage());
+            } finally {
+                try {
+                    this.printManager.close();
+                } catch (final IOException exc) {
+                    // intentionally left empty
+                }
+            }
+        }
+
+        private void giveFeedback(final Action inAction) {
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    inAction.run();
+                }
+            });
+        }
+    }
+
+    private Action getPrintCompleteAction(final int numberOfProcessed) {
+        return new Action(RelationsMessages.getString("PrintAction.job.status")) { //$NON-NLS-1$
+            @Override
+            public void run() {
+                MessageDialog.openInformation(PrintAction.this.shell,
+                        RelationsMessages.getString("PrintAction.job.completed"), //$NON-NLS-1$
+                        RelationsMessages.getString("PrintAction.job.completed.msg", new Object[] { //$NON-NLS-1$
+                                Integer.valueOf(numberOfProcessed) }));
+            }
+        };
+    }
+
+    private Action getErrorMsgAction(final String inErrorMsg) {
+        return new Action(RelationsMessages.getString("PrintAction.error.title")) { //$NON-NLS-1$
+            @Override
+            public void run() {
+                MessageDialog.openError(PrintAction.this.shell,
+                        RelationsMessages.getString("PrintAction.error.msg"), //$NON-NLS-1$
+                        inErrorMsg);
+            }
+        };
+    }
+
+}

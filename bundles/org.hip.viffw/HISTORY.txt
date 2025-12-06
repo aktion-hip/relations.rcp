@@ -1,0 +1,244 @@
+$Id: HISTORY.txt,v 1.4 2006/07/11 12:43:53 aktion-hip Exp $
+
+VIF framework: HISTORY
+======================
+
+Release 1.3.1:
+==============
+- Made org.hip.kernel.bom.impl.CommittableStatement implementing java.io.Closeable.
+- Fixed bug in org.hip.kernel.bom.impl.DomainObjectImpl.initKeyValue().
+- Improved org.hip.kernel.bom.impl.DomainObjectImpl.insert().
+
+Release 1.3.0:
+==============
+- Added proper semantic versioning to all exportet packages.
+- Improved code quality using PMD.
+- Replaced all occurrences of Vector by ArrayList.
+
+Release 1.2.1:
+==============
+- Added proper semantic versioning to Manifest.mf.
+- org.hip.kernel.bom.model.TypeDef: adjusted values of valueTypes array.
+
+Release 1.2.0:
+==============
+- Replaced DB provider service by OSGi DB access service.
+- Removed VIF logging in favor of SLF4J logging.
+
+Release 1.1.3:
+==============
+- InObjectImpl: Made class correctly working with generics. Added constructor with collection parameter.
+- KeyObjectImpl, ValueForSQL: Improved behavior, classes convert passed collections to InObjectImpl internally.
+- VSys: replaced JUL by slf4j.Logger.
+
+Release 1.1.2:
+==============
+- HtmlView: Using the servlet's writer to stream the view, for that the view's encoding is handled correctly.
+- Made DomainObjects returning entry id as Long.
+- Mails can be sent as html.
+- Added possibility to select distinct rows and to create joins based on composed foreign keys.
+- Added possibility to upload files using apache.commons.fileupload.
+
+Release 1.1.1:
+==============
+- Added Object SQLNull to make statement like '... WHERE column IS NULL' possible.
+- Added org.hip.kernel.bom.QueryResult.load() with additional parameter MaxEntries.
+- Improved org.hip.kernel.bom.impl.AbstractDomainObjectHome.select() with GroupByObject parameter.
+- Improved org.hip.kernel.bom.impl.DomainObjectImpl.loadFromResultSet() for calculated fields.
+- org.hip.kernel.servlet.Context: Added setter/getter for MIMEFile.
+- org.hip.kernel.servlet.MIMEFile: Added methods getFileName(), getMIMEType() and getLength().
+- Refactoring org.hip.kernel.servlet.impl.AbstractRequestHandler: factored out protected method writeToResponse().
+- Refactoring: moved framework constants to new class org.hip.kernel.sys.VSysConstants.
+
+Release 1.1:
+==============
+- Made VIF Framework an OSGi bundle.
+- Made org.hip.kernel.servlet.impl.AbstractRequestHandler calling the default/master task if no requestType has been provided.
+- Improved org.hip.kernel.servlet.impl.AbstractTaskManager to handle pluggable tasks.
+- Added method org.hip.kernel.sys.VSys.getBundleProperty() to access application's properties during bundle activation.
+- Added method setParameter() to interface org.hip.kernel.servlet.Context.
+- Moved AbstractSerializer and AbstractDomainObjectVisitor from org.hip.kernel.bom.impl to org.hip.kernel.bom.
+- Made org.hip.kernel.code.CodeListFactory/CodeListHome working with OSGi bundles.
+- Made RequestHandler running master task in case of no request type provided.
+- Integrated ISourceCreatorStrategy for XSL transformation.
+- Improved VSys.getVSysProperties() to look into ResourceBundle for the application's properties file.
+- Implemented meaningful View.equals(). 
+- Added IPage interface for HtmlPage classes.
+- Added method Context.dispose() to release resources.
+- Fixed html in org.hip.kernel.servlet.impl.FrameSetHtmlPage.
+- Created org.hip.kernel.bom.impl.HTMLSerializer.
+- Created org.hip.kernel.sys.FWActivator.
+- Added constant XMLCharacterFilter.DEFAULT_FILTER.
+- Made AbstractRequestHandler.doGet() catching and handling TransformationErrors.
+- Added method AbstractXSLView.getSerialized() to serialize a specified domain object to XML that can be processed with XSLT (using the default character filter).
+- org.hip.kernel.bom.impl.AbstractStructuredTextSerializer: Removed newlines at end of text node.
+- org.hip.kernel.stext.InlineStructuredText2HTML: Made inline structuring working when elements are in brackets.
+- Made KeyObject working with BinaryBooleanOperator to allow AND, OR and XOR.
+- Added QueryStatement.showTables().
+- Added DomainObjectHome.createUpdateString(KeyObject inChange, KeyObject inWhere).
+- MappingDefImpl.set(): transform value of column name to upper case to fix problem with case insensitive databases (like Derby).
+- Added constructor OutlinedQueryResult(int count, QueryResult) (i.e. changed order of parameters) to work around problem with closing connections caused by some databases (like Derby).
+- Added method ObjectDefGenerator.createObjectDef(String, IMappingDefCreator).
+
+Release 1.0.2:
+==============
+- Integrated Java 5 technology: Generics, for loops and varargs.
+- Made SQL commands created case sensitive.
+- Added LDAP access.
+- Improve logging of exceptions.
+- Added Composite Property, i.e. a Property in the object definition of a domain model can be of propertyType 'composite' now. 
+
+
+Release 1.0.1:
+==============
+- Improved DomainObjectHome.checkStructure() by adding a schema parameter.
+- Improved management of log files.
+
+
+Release 1.0:
+============
+
+Features added:
+- Removed deprecated methods and unused fields that caused Java compiler warnings.
+- Use of Java 1.2 Collection framework as much as possible, i.e. replacing Enumeration by Itarator.
+- Replaced tracing and logging packages in favour of java.util.logging.
+- Adding SQLRange objects to filter for values falling in a specified range.
+- Added DefaultStatement to make SQL statements like 'CREATE TABLE...' and 'DROP TABLE...' possible.
+- Added handling of Derby databases.
+- Added method DomainObjecHome.checkStructure() to check whether the home corresponds with the table it is mapped to according to it's object definition.
+- Added possibility to change the database accessed during runtime.
+
+Bugs fixed:
+- Correcting conceptual error concerning storing of data and time values, making it possible to simplify use of DBAdapterSimple.
+
+
+Release 0.9.7.4:
+================
+
+- Added Java2 connection pooling and JNDI resource access.
+- Added storing and retrieving of binary data to persistence layer.
+- Improved PreparedUpdateStatement making it possible to update a whole set of entries.
+
+Release 0.9.7.3:
+================
+- Made framework working with Tomcat 5.
+
+Release 0.9.7
+=============
+
+Features added:
+- Added LIMIT to SQL.
+- Added convenience methods to VSys.java.
+- Improved error handling in WorkflowAwareImpl.java.
+
+Bugs fixed:
+- Improved error handling in AbstractRequestHandler.java in case of XSLT failure.
+
+
+Release 0.9.6
+=============
+
+Features added:
+- Added join type 'NO_JOIN' to JoinedObjectDef.
+- Framework for DomainObjectModels implements SQL HAVING and GROUP BY now.
+
+
+Release 0.9.5
+=============
+
+Bugs fixed:
+- Fixed bug in RequestHandler that caused exception when 
+  framework is used in combination with Apache.
+
+  
+Release 0.9.4
+=============
+
+Features added:
+- Extended servlet framework to allow for cookieless session tracking.
+- Changed VSys for that framework can be used as persistency layer only, i.e. without servlet part.
+- Added method PersistencyManager.reset() to allow changing of the database during runtime.
+- Added alternative model (e.g. lightweight model) creation and handling.
+- Added functionality for SQL SELECT UNION queries and other SQL Set operations.
+- Extended domain object framework: 
+  -- Nested queries can be defined with placeholders where domain objects can be filled in.
+  -- Added template attribute to create more complex virtual columns.
+  -- Added hidden attribute with regard to the SQL Set operations.
+- Extended documentation about the domain object framework with descriptions of the new features.
+
+
+Release 0.9.3
+=============
+
+Features added:
+- Set Assert.assert() deprecated. Used Assert.asserTrue() or Assert.asserNotNull() 
+  instead throughout the framework.
+  
+  
+Release 0.9.2
+=============
+
+Features added:
+- Added local field to serializer for that date values can be serialized with the proper localized format.
+- Added local parameter to method signature of QueryResult for that domain objects can be serialized with the proper localized format.
+- Added method getLocal() to View for that views can be used to retrieve the correct locale for the actual user.
+
+Bugs fixed:
+- Closing connection in org.hip.kernel.persistency.VConnection in case connection pooling is disabled.
+
+
+Release 0.9.1
+=============
+
+Features added:
+- Extended abstract request handler to make change of servlet dispatching possible.
+
+
+Release 0.9.0
+=============
+
+Features added:
+- Added handling of nested queries to Domain Object Framework.
+- Implemented creation of script links in html head (in analogy to CSS links).
+
+
+Release 0.8.5
+=============
+
+Features added:
+- Made Context Serializable, thus adding Tomcat restart persistence to the framework.
+- Added possibility to disable connection pooling.
+
+
+Release 0.8.4
+=============
+
+Features added:
+- Refactored KeyObject, thus making KeyObjects involved and recursive. With this, it is possible to create grouped SQL WHERE statements, e.g. "... WHERE groupid = 43 AND ((memberid = 22 AND isauthor = 1) OR state = 3)"
+
+
+Release 0.8.3
+=============
+
+Features added:
+- Added setters to VSys making the application's configuration object able to read the application's configurations from a properties file having any name residing at any place.
+- Overwrote the init() method in AbstractRequestHandler (the framework's servlet) to initialize the application's configuration with the application's servlet context and the name of the configuration file.
+- Added the abstract method getSysName() all classes extending the application's servlet have to implement. This method returns the name of the application's configuration file.
+- The changes in this release are intended to make deployment easier.
+
+
+Release 0.8.2
+=============
+
+Features added:
+- Expanded QueryResult's serializer methods with parameter thus making it possible to specify the serializer to use.
+
+
+Release 0.8.1
+=============
+
+Features added:
+- Added RedirectPage to redirect the output to a specified page.
+
+
+

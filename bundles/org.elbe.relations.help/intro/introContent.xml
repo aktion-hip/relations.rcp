@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+   <page
+         id="root"
+         style="css/intro.css"
+         style-id="rootPage">
+      <title 
+            style-id="intro-header">Welcome to Relations RCP (help)</title>
+      
+      <group id="top-links" style-id="group-links">
+         <link
+               label="Go to the Workbench"
+               url="http://org.eclipse.ui.intro/switchToLaunchBar"
+               id="workbench">
+            <text>Start working with the application immediately.</text>
+         </link>
+         
+         <link
+               label="View Tutorials"
+               url="http://org.eclipse.ui.intro/showPage?id=tutorialsPage"
+               id="tutorials-link">
+            <text>Learn how to use key features.</text>
+         </link>
+      </group>
+      
+      <anchor id="rootPageAnchor"/>
+      
+   </page>
+
+   <page
+         id="tutorialsPage"
+         style="css/intro.css"
+         style-id="page">
+      <title style-id="intro-header">Tutorials and Resources</title>
+      <text>Here you can find links to external documentation or help topics.</text>
+
+      <group id="tutorial-links">
+         <link
+               label="Online Documentation"
+               url="https://docs.yourcompany.com"
+               id="docs"
+               url-style="url-external">
+            <text>View the full documentation in a web browser.</text>
+         </link>
+         
+         <link
+               label="Help Topic: Basic Concepts"
+               url="http://org.eclipse.ui.intro/showHelpTopic?id=/com.yourcompany.rcp.help/html/concepts.html"
+               id="help-topic">
+            <text>Review the core concepts of the application.</text>
+         </link>
+      </group>
+   </page>
+   
+</introContent>

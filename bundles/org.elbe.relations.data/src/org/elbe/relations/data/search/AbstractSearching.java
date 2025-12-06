@@ -1,0 +1,137 @@
+/***************************************************************************
+ * This package is part of Relations application.
+ * Copyright (C) 2004-2025, Benno Luthiger
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ***************************************************************************/
+package org.elbe.relations.data.search;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.elbe.relations.data.Constants;
+import org.elbe.relations.data.internal.search.IndexerRegistration;
+
+/** Provides basic functionality for full text search using lucene.
+ *
+ * @author Luthiger */
+public abstract class AbstractSearching {
+    public static final String ITEM_TYPE = "itemType"; //$NON-NLS-1$
+    public static final String ITEM_ID = "itemID"; //$NON-NLS-1$
+    public static final String UNIQUE_ID = "uniqueID"; //$NON-NLS-1$
+    public static final String TITLE = "itemTitle"; //$NON-NLS-1$
+    public static final String TEXT = "itemText"; //$NON-NLS-1$
+    public static final String CONTENT_FULL = "itemFull"; //$NON-NLS-1$
+    public static final String DATE_CREATED = "itemDateCreated"; //$NON-NLS-1$
+    public static final String DATE_MODIFIED = "itemDateModified"; //$NON-NLS-1$
+
+    private static DirectoryFactory cDirectoryFactory = null;
+
+    private String indexName = ""; //$NON-NLS-1$
+
+    /** AbstractSearching constructor.
+     *
+     * @param indexDir String the name of the index, i.e. the directory where the index is stored. */
+    public AbstractSearching(final String indexDir) {
+        this.indexName = indexDir;
+    }
+
+    protected File getIndexDir() throws IOException {
+        return getDirectoryFactory().getDirectory(this.indexName);
+    }
+
+    protected Path getIndexPath() {
+        return getDirectoryFactory().getDirectoryPath(this.indexName);
+    }
+
+    protected File getIndexContainer() {
+        return getDirectoryFactory().getIndexContainer(this.indexName);
+    }
+
+    protected DirectoryFactory getDirectoryFactory() {
+        if (cDirectoryFactory == null) {
+            cDirectoryFactory = new FileSystemDirectoryFactory();
+        }
+        return cDirectoryFactory;
+    }
+
+    /** Returns the number of documents actually indexed.
+     *
+     * @return int Number of documents in the index.
+     * @throws IOException */
+    public int numberOfIndexed() throws IOException {
+        return getIndexer().numberOfIndexed(getIndexPath());
+    }
+
+    /** @return IIndexer the actually registered <code>IIndexer</code>. */
+    protected IIndexer getIndexer() {
+        return IndexerRegistration.INSTANCE.getIndexer();
+    }
+
+    // --- inner classes ---
+
+    protected interface DirectoryFactory {
+        File getDirectory(String indexName) throws IOException;
+
+        File getIndexContainer(String indexName);
+
+        Path getDirectoryPath(String indexName);
+    }
+
+    private class FileSystemDirectoryFactory implements DirectoryFactory {
+        protected File root;
+
+        public FileSystemDirectoryFactory() {
+            this.root = getRoot();
+        }
+
+        @Override
+        public File getDirectory(final String indexName) {
+            final File indexContainer = checkDir(new File(this.root, Constants.LUCENE_STORE));
+            return checkDir(new File(indexContainer, indexName));
+        }
+
+        private File checkDir(final File fileToCheck) {
+            if (!fileToCheck.exists()) {
+                fileToCheck.mkdir();
+            }
+            return fileToCheck;
+        }
+
+        protected File getRoot() {
+            return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+        }
+
+        @Override
+        public File getIndexContainer(final String indexName) {
+            return getDirectory(indexName);
+        }
+
+        @Override
+        public Path getDirectoryPath(final String indexName) {
+            return getDirectory(indexName).toPath();
+        }
+    }
+
+    protected class TempDirectoryFactory extends FileSystemDirectoryFactory {
+        @Override
+        public File getRoot() {
+            return new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+        }
+    }
+
+}

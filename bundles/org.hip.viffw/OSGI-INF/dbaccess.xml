@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.hip.viffw.dbaccess">
+   <implementation class="org.hip.kernel.provider.impl.DataAccessComponent"/>
+   <reference bind="registerDataSource" unbind="unregisterDataSource" cardinality="1..n" interface="org.osgi.service.jdbc.DataSourceFactory" name="DataSourceFactory" policy="dynamic"/>
+</scr:component>

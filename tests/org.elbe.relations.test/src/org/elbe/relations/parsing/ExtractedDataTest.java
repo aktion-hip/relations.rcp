@@ -1,0 +1,68 @@
+package org.elbe.relations.parsing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Locale;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * JUnit test
+ *
+ * @author lbenno
+ */
+public class ExtractedDataTest {
+    private static final String NL = System.getProperty("line.separator");
+
+    private Locale localeOld;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        this.localeOld = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        Locale.setDefault(this.localeOld);
+    }
+
+    @Test
+    public void testGetText() {
+        ExtractedData lExtracted = new ExtractedData();
+
+        lExtracted.setFilePath("c:\\data\\test\\testImage.jpg");
+        String lExpcected = "[<i>File: c:\\data\\test\\testImage.jpg</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+
+        lExtracted.setFileSize(3000456L);
+        lExpcected = "[<i>File: c:\\data\\test\\testImage.jpg;" + NL
+                + "Size: 2,930.13 kB</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+
+        lExtracted.setFileType("image/jpeg");
+        lExpcected = "[<i>File: c:\\data\\test\\testImage.jpg;" + NL
+                + "Size: 2,930.13 kB;" + NL + "Type: image/jpeg</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+
+        final long lMillis = 1300000000000L;
+        lExtracted.setDateCreated(lMillis);
+        lExpcected = "[<i>File: c:\\data\\test\\testImage.jpg;" + NL
+                + "Size: 2,930.13 kB;" + NL + "Type: image/jpeg;" + NL
+                + "Created: March 13, 2011, 8:06:40 AM CET</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+
+        //
+        lExtracted = new ExtractedData();
+        lExtracted.setFileType("image/jpeg");
+        lExpcected = "[<i>Type: image/jpeg</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+
+        lExtracted.setFileSize(3000456L);
+        lExpcected = "[<i>Size: 2,930.13 kB;" + NL + "Type: image/jpeg</i>]";
+        assertEquals(lExpcected, lExtracted.getText());
+    }
+
+}

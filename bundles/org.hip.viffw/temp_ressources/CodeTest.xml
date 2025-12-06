@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<CodeLists codeID="CodeTest">
+	<CodeList language="de">
+		<CodeListItem elementID="1" label="Dies"/>
+		<CodeListItem elementID="2" label="ist"/>
+		<CodeListItem elementID="3" label="ein"/>
+		<CodeListItem elementID="4" label="Test!"/>
+	</CodeList>
+	<CodeList language="en">
+		<CodeListItem elementID="1" label="This"/>
+		<CodeListItem elementID="2" label="is"/>
+		<CodeListItem elementID="3" label="a"/>
+		<CodeListItem elementID="4" label="test!"/>
+	</CodeList>
+</CodeLists>

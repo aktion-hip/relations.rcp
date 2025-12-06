@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Automatic-Module-Name: org.elbe.relations.print.dft
+Bundle-ActivationPolicy: lazy
+Bundle-Name: Default Print-out Plug-in for Relations application
+Bundle-SymbolicName: org.elbe.relations.print.dft
+Bundle-Version: 1.2.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-Vendor: RelationWare
+Import-Package: org.elbe.relations.services;version="[2.0.0,3.0.0)",
+ org.elbe.relations.utility;version="[2.0.0,3.0.0)"
+Service-Component: OSGI-INF/print.xml

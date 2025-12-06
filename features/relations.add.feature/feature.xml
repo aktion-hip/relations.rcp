@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="relations.add.feature"
+      label="Additional Eclipse plug-ins for Relations"
+      version="2.4.0.qualifier"
+      provider-name="Relations">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="org.eclipse.help"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.jetty"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.registry"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.jsp.jasper"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.jsp.jasper.registry"
+         version="0.0.0"/>
+
+   <plugin
+         id="javax.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="javax.el-api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.mortbay.jasper.mortbay-apache-el"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.opcoach.e4.preferences"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.core.runtime"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui.workbench"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.workbench.addons.swt"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.workbench3"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui.ide"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.help.base"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.help.ui"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.help.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui.intro"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui.intro.universal"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.workbench"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ui.intro.quicklinks"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.web.ui"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.web"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.sun.el.javax.el"
+         version="0.0.0"/>
+
+</feature>

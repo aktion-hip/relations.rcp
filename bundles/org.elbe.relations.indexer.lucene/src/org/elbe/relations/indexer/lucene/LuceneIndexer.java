@@ -1,0 +1,320 @@
+/***************************************************************************
+ * This package is part of Relations application.
+ * Copyright (C) 2004-2025, Benno Luthiger
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ***************************************************************************/
+package org.elbe.relations.indexer.lucene;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.ar.ArabicAnalyzer;
+import org.apache.lucene.analysis.bg.BulgarianAnalyzer;
+import org.apache.lucene.analysis.br.BrazilianAnalyzer;
+import org.apache.lucene.analysis.ca.CatalanAnalyzer;
+import org.apache.lucene.analysis.cz.CzechAnalyzer;
+import org.apache.lucene.analysis.da.DanishAnalyzer;
+import org.apache.lucene.analysis.de.GermanAnalyzer;
+import org.apache.lucene.analysis.el.GreekAnalyzer;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.eu.BasqueAnalyzer;
+import org.apache.lucene.analysis.fa.PersianAnalyzer;
+import org.apache.lucene.analysis.fi.FinnishAnalyzer;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
+import org.apache.lucene.analysis.gl.GalicianAnalyzer;
+import org.apache.lucene.analysis.hi.HindiAnalyzer;
+import org.apache.lucene.analysis.hu.HungarianAnalyzer;
+import org.apache.lucene.analysis.hy.ArmenianAnalyzer;
+import org.apache.lucene.analysis.id.IndonesianAnalyzer;
+import org.apache.lucene.analysis.it.ItalianAnalyzer;
+import org.apache.lucene.analysis.lv.LatvianAnalyzer;
+import org.apache.lucene.analysis.nl.DutchAnalyzer;
+import org.apache.lucene.analysis.no.NorwegianAnalyzer;
+import org.apache.lucene.analysis.pt.PortugueseAnalyzer;
+import org.apache.lucene.analysis.ro.RomanianAnalyzer;
+import org.apache.lucene.analysis.ru.RussianAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.sv.SwedishAnalyzer;
+import org.apache.lucene.analysis.th.ThaiAnalyzer;
+import org.apache.lucene.analysis.tr.TurkishAnalyzer;
+import org.apache.lucene.document.DateTools;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.StoredFields;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
+import org.elbe.relations.data.search.AbstractSearching;
+import org.elbe.relations.data.search.IIndexer;
+import org.elbe.relations.data.search.IndexerDateField;
+import org.elbe.relations.data.search.IndexerDateField.TimeResolution;
+import org.elbe.relations.data.search.IndexerDocument;
+import org.elbe.relations.data.search.IndexerField;
+import org.elbe.relations.data.search.IndexerHelper;
+import org.elbe.relations.data.search.RetrievedItem;
+import org.elbe.relations.data.utility.RException;
+import org.elbe.relations.data.utility.UniqueID;
+import org.elbe.relations.lucene.internal.DirectoryFactory;
+import org.elbe.relations.search.RetrievedItemWithIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * The Lucene implementation of the <code>IIndexer</code> interface.
+ *
+ * @author Luthiger
+ */
+public class LuceneIndexer implements IIndexer {
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexer.class);
+    //    public static final Version LUCENE_VERSION = Version.LUCENE_4_10_1;
+    public static final Version LUCENE_VERSION = Version.LUCENE_10_2_0;
+
+    private final DirectoryFactory directoryFactory = new FileSystemDirectoryFactory();
+
+    // enum for language analyzers (see lucene-analyzers-common-4.10.1.jar)
+    private enum LanguageAnalyzer {
+        AR("ar", new ArabicAnalyzer()),
+        BG("bg", new BulgarianAnalyzer()),
+        BR("br", new BrazilianAnalyzer()),
+        CA("ca", new CatalanAnalyzer()),
+        CN("cn", new StandardAnalyzer()),
+        CZ("cz", new CzechAnalyzer()),
+        DA("da", new DanishAnalyzer()),
+        DE("de", new GermanAnalyzer()),
+        EL("el", new GreekAnalyzer()),
+        EN("en", new StandardAnalyzer()),
+        ES("es", new SpanishAnalyzer()),
+        EU("eu", new BasqueAnalyzer()),
+        FA("fa", new PersianAnalyzer()),
+        FI("fi", new FinnishAnalyzer()),
+        FR("fr", new FrenchAnalyzer()),
+        GL("gl", new GalicianAnalyzer()),
+        HI("hi", new HindiAnalyzer()),
+        HU("hu", new HungarianAnalyzer()),
+        HY("hy", new ArmenianAnalyzer()),
+        ID("id", new IndonesianAnalyzer()),
+        IT("it", new ItalianAnalyzer()),
+        LV("lv", new LatvianAnalyzer()),
+        NL("nl", new DutchAnalyzer()),
+        NO("no", new NorwegianAnalyzer()),
+        PT("pt", new PortugueseAnalyzer()),
+        RO("ro", new RomanianAnalyzer()),
+        RU("ru", new RussianAnalyzer()),
+        SV("sv", new SwedishAnalyzer()),
+        TH("th", new ThaiAnalyzer()),
+        TR("tr", new TurkishAnalyzer());
+
+        public final String isoLanguage;
+        public final Analyzer analyzer;
+
+        LanguageAnalyzer(final String inISOLanguage, final Analyzer inAnalyzer) {
+            this.isoLanguage = inISOLanguage;
+            this.analyzer = inAnalyzer;
+        }
+    }
+
+    @Override
+    public void processIndexer(final IndexerHelper indexer, final Path indexDir, final String language,
+            final boolean create) throws IOException {
+        try (IndexWriter writer = new IndexWriter(this.directoryFactory.getDirectory(indexDir),
+                createConfiguration(language, create))) {
+            for (final IndexerDocument doc : indexer.getDocuments()) {
+                writer.addDocument(transformDoc(doc));
+            }
+            writer.commit();
+        } catch (final IOException exc) {
+            LOG.error("Error with Lucene index encountered!", exc);
+        }
+    }
+
+    private IndexWriterConfig createConfiguration(final String language, final boolean createNew) {
+        final IndexWriterConfig config = new IndexWriterConfig(getAnalyzer(language));
+        config.setOpenMode(createNew ? OpenMode.CREATE : OpenMode.CREATE_OR_APPEND);
+        return config;
+    }
+
+    @Override
+    public void processIndexer(final IndexerHelper indexer, final Path indexDir, final String language)
+            throws IOException {
+        processIndexer(indexer, indexDir, language, false);
+    }
+
+    private Analyzer getAnalyzer(final String language) {
+        for (final LanguageAnalyzer analyzer : LanguageAnalyzer.values()) {
+            if (language.equals(analyzer.isoLanguage)) {
+                return analyzer.analyzer;
+            }
+        }
+        return new StandardAnalyzer();
+    }
+
+    private Document transformDoc(final IndexerDocument doc) {
+        final Document outDocument = new Document();
+        for (final IndexerField field : doc.getFields()) {
+            outDocument.add(createField(field));
+        }
+        return outDocument;
+    }
+
+    private Field createField(final IndexerField field) {
+        final Field.Store store = field.getStoreValue() == IndexerField.Store.YES ? Field.Store.YES : Field.Store.NO;
+        final IFieldFactory factory = field.getFieldType() == IndexerField.Type.ID ? new StringFieldFactory()
+                : new TextFieldFactory();
+
+        String value = field.getValue();
+        if (field instanceof final IndexerDateField indexed) {
+            value = DateTools.timeToString(indexed.getTime(), getResolution(indexed.getResolution()));
+        }
+        return factory.createField(field.getFieldName(), value, store);
+    }
+
+    private DateTools.Resolution getResolution(final TimeResolution resolution) {
+        DateTools.Resolution outResolution = DateTools.Resolution.YEAR;
+        if (resolution == TimeResolution.MONTH) {
+            outResolution = DateTools.Resolution.MONTH;
+        } else if (resolution == TimeResolution.DAY) {
+            outResolution = DateTools.Resolution.DAY;
+        } else if (resolution == TimeResolution.HOUR) {
+            outResolution = DateTools.Resolution.HOUR;
+        } else if (resolution == TimeResolution.MINUTE) {
+            outResolution = DateTools.Resolution.MINUTE;
+        } else if (resolution == TimeResolution.SECOND) {
+            outResolution = DateTools.Resolution.SECOND;
+        } else if (resolution == TimeResolution.MILLISECOND) {
+            outResolution = DateTools.Resolution.MILLISECOND;
+        }
+        return outResolution;
+    }
+
+    @Override
+    public int numberOfIndexed(final Path indexDir) throws IOException {
+        int outNumber = 0;
+        try (IndexReader reader = DirectoryReader.open(this.directoryFactory.getDirectory(indexDir))) {
+            outNumber = reader.numDocs();
+        }
+        return outNumber;
+    }
+
+    @Override
+    public Collection<String> getAnalyzerLanguages() {
+        final Collection<String> outLanguages = new ArrayList<>();
+        for (final LanguageAnalyzer lAnalyzer : LanguageAnalyzer.values()) {
+            outLanguages.add(lAnalyzer.isoLanguage);
+        }
+        return outLanguages;
+    }
+
+    @Override
+    public void deleteItemInIndex(final String inUniqueID, final String inFieldName, final Path indexDir,
+            final String inLanguage) throws IOException {
+        try (IndexWriter lWriter = new IndexWriter(this.directoryFactory.getDirectory(indexDir),
+                createConfiguration(inLanguage, false))) {
+            lWriter.deleteDocuments(new Term(inFieldName, inUniqueID));
+            lWriter.commit();
+        } catch (final IOException exc) {
+            LOG.error("Error with Lucene index encountered!", exc);
+        }
+    }
+
+    @Override
+    public void initializeIndex(final Path indexDir, final String inLanguage) throws IOException {
+        final Directory directory = this.directoryFactory.getDirectory(indexDir);
+        final IndexWriter writer = new IndexWriter(directory, createConfiguration(inLanguage, true));
+        writer.commit();
+        writer.close();
+    }
+
+    @Override
+    public List<RetrievedItem> search(final String queryTerm, final Path indexDir, final String language,
+            final int maxHits) throws IOException, RException {
+        try (IndexReader reader = DirectoryReader.open(this.directoryFactory.getDirectory(indexDir))) {
+            final IndexSearcher searcher = new IndexSearcher(reader);
+            final TopDocs docs = searcher.search(parseQuery(queryTerm, language), maxHits);
+            return createResults(docs, searcher);
+        } catch (final ParseException exc) {
+            throw new RException(exc.getMessage());
+        }
+    }
+
+    private List<RetrievedItem> createResults(final TopDocs docs, final IndexSearcher searcher) throws IOException {
+        final StoredFields storedFields = searcher.storedFields();
+        final ScoreDoc[] scoreDocs = docs.scoreDocs;
+        final List<RetrievedItem> results = new ArrayList<>(scoreDocs.length);
+        for (final ScoreDoc scoreDoc : scoreDocs) {
+            final Document document = storedFields.document(scoreDoc.doc);
+            results.add(new RetrievedItemWithIcon(new UniqueID(document.get(AbstractSearching.UNIQUE_ID)),
+                    document.get(AbstractSearching.TITLE)));
+        }
+        return results;
+    }
+
+    private Query parseQuery(final String inQueryTerm, final String inLanguage) throws ParseException {
+        final QueryParser outParser = new QueryParser(AbstractSearching.CONTENT_FULL, getAnalyzer(inLanguage));
+        return outParser.parse(inQueryTerm);
+    }
+
+    // --- inner classes ---
+
+    private static class FileSystemDirectoryFactory implements DirectoryFactory {
+
+        @Override
+        public Directory getDirectory(final Path indexDir) throws IOException {
+            return FSDirectory.open(indexDir);
+        }
+    }
+
+    // ---
+
+    private interface IFieldFactory {
+        Field createField(String name, String value, Field.Store stored);
+    }
+
+    private static class TextFieldFactory implements IFieldFactory {
+
+        @Override
+        public Field createField(final String name, final String value, final Store stored) {
+            return new TextField(name, value, stored);
+        }
+    }
+
+    private static class StringFieldFactory implements IFieldFactory {
+
+        @Override
+        public Field createField(final String name, final String value, final Store stored) {
+            return new StringField(name, value, stored);
+        }
+    }
+
+}
