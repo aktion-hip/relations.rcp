@@ -101,10 +101,10 @@ public abstract class AbstractSelectionView implements IPartWithSelection {
 
     @Focus
     public void onFocus() {
-        final Table lTable = (Table) this.viewer.getControl();
-        lTable.setFocus();
+        final Table table = (Table) this.viewer.getControl();
+        table.setFocus();
         if (this.viewer.getSelection().isEmpty()) {
-            lTable.select(0);
+            table.select(0);
         }
     }
 
@@ -173,8 +173,7 @@ public abstract class AbstractSelectionView implements IPartWithSelection {
                     final UniqueID[] uniqueIDs = new UniqueID[items.length];
                     for (int i = 0; i < items.length; i++) {
                         final ILightWeightItem item = (ILightWeightItem) items[i];
-                        uniqueIDs[i] = new UniqueID(item.getItemType(),
-                                item.getID());
+                        uniqueIDs[i] = new UniqueID(item.getItemType(), item.getID());
                     }
                     event.data = uniqueIDs;
                 }
@@ -188,8 +187,7 @@ public abstract class AbstractSelectionView implements IPartWithSelection {
             @Override
             public void drop(final DropTargetEvent event) {
                 AbstractSelectionView.this.handlerService.executeHandler(ParameterizedCommand.generateCommand(
-                        AbstractSelectionView.this.commandService
-                        .getCommand(ICommandIds.CMD_RELATION_REMOVE),
+                        AbstractSelectionView.this.commandService.getCommand(ICommandIds.CMD_RELATION_REMOVE),
                         null));
             }
         });

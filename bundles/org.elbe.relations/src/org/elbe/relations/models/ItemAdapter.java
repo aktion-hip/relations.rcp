@@ -69,27 +69,20 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
         initialize(context);
     }
 
-    /**
-     * ItemAdapter constructor, adapting an <code>IItemModel</code>.
+    /** ItemAdapter constructor, adapting an <code>IItemModel</code>.
      *
-     * @param inItem
-     *            {@link IItemModel} adaptee
-     * @param inContext
-     *            {@link IEclipseContext}
-     */
-    public ItemAdapter(final IItemModel inItem,
-            final IEclipseContext inContext) {
-        this.item = inItem;
+     * @param item {@link IItemModel} adaptee
+     * @param context {@link IEclipseContext} */
+    public ItemAdapter(final IItemModel item, final IEclipseContext context) {
+        this.item = item;
         this.hasDelegate = false;
-        initialize(inContext);
+        initialize(context);
     }
 
-    /**
-     * @param inContext
-     */
-    private void initialize(final IEclipseContext inContext) {
-        this.languageService = inContext.get(LanguageService.class);
-        this.log = inContext.get(Logger.class);
+    /** @param context */
+    private void initialize(final IEclipseContext context) {
+        this.languageService = context.get(LanguageService.class);
+        this.log = context.get(Logger.class);
         refresh();
     }
 
@@ -133,14 +126,14 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
     }
 
     @Override
-    public void addSource(final IRelation inRelation) {
-        this.sources.add(inRelation);
+    public void addSource(final IRelation relation) {
+        this.sources.add(relation);
     }
 
     @Override
-    public void addTarget(final IRelation inRelation) {
-        if (inRelation != null) {
-            this.targets.add(inRelation);
+    public void addTarget(final IRelation relation) {
+        if (relation != null) {
+            this.targets.add(relation);
         }
     }
 
@@ -166,12 +159,11 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
      * We compare on the title.
      */
     @Override
-    public int compareTo(final Object inObject) {
-        final Collator lCollator = this.languageService.getContentLanguage();
-        lCollator.setStrength(Collator.SECONDARY);
+    public int compareTo(final Object other) {
+        final Collator collator = this.languageService.getContentLanguage();
+        collator.setStrength(Collator.SECONDARY);
         try {
-            return lCollator.compare(getTitle(),
-                    ((ItemAdapter) inObject).getTitle());
+            return collator.compare(getTitle(), ((ItemAdapter) other).getTitle());
         }
         catch (final VException exc) {
             this.log.error(exc, exc.getMessage());
@@ -211,8 +203,8 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
      * @see IItem#getItemDeleteAction()
      */
     @Override
-    public IAction getItemDeleteAction(final Logger inLog) {
-        return this.item.getItemDeleteAction(inLog);
+    public IAction getItemDeleteAction(final Logger log) {
+        return this.item.getItemDeleteAction(log);
     }
 
     /**
@@ -251,19 +243,14 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
         return null;
     }
 
-    /**
-     * Saves the values of the title and text.
+    /** Saves the values of the title and text.
      *
-     * @param inTitle
-     *            String
-     * @param inText
-     *            String
-     * @throws BOMException
-     */
+     * @param title String
+     * @param text String
+     * @throws BOMException */
     @Override
-    public void saveTitleText(final String inTitle, final String inText)
-            throws BOMException {
-        getItem().saveTitleText(inTitle, inText);
+    public void saveTitleText(final String title, final String text) throws BOMException {
+        getItem().saveTitleText(title, text);
     }
 
     /**
@@ -275,8 +262,8 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
     }
 
     @Override
-    public void accept(final DomainObjectVisitor inVisitor) {
-        getItem().accept(inVisitor);
+    public void accept(final DomainObjectVisitor visitor) {
+        getItem().accept(visitor);
     }
 
     @Override
@@ -292,17 +279,17 @@ public class ItemAdapter implements IItemModel, Comparable<Object> {
      * @return <code>true</code> if ID and type are equal.
      */
     @Override
-    public boolean equals(final Object inObj) {
-        if (this == inObj) {
+    public boolean equals(final Object other) {
+        if (this == other) {
             return true;
         }
-        if (inObj == null) {
+        if (other == null) {
             return false;
         }
-        if (getClass() != inObj.getClass()) {
+        if (getClass() != other.getClass()) {
             return false;
         }
-        final ItemAdapter lOther = (ItemAdapter) inObj;
+        final ItemAdapter lOther = (ItemAdapter) other;
         if (getItem() == null) {
             if (lOther.getItem() != null) {
                 return false;

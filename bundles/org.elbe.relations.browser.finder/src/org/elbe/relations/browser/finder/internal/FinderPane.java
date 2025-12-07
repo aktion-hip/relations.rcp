@@ -96,7 +96,7 @@ public class FinderPane {
         this.gallery = showScrollbar ? new Gallery(parent, SWT.H_SCROLL | SWT.BORDER) : new NoScrollGallery(parent);
         this.gallery.setGroupRenderer(createGroupRenderer());
         this.gallery.setItemRenderer(createItemRenderer());
-        getPreferenceFont().ifPresent(f -> setFont(f));
+        getPreferenceFont().ifPresent(this::setFont);
         service.registerContextMenu(this.gallery, Constants.BROWSER_POPUP);
 
         this.gallery.addFocusListener(new PaneFocusListener());
@@ -132,10 +132,10 @@ public class FinderPane {
     }
 
     private AbstractGalleryGroupRenderer createGroupRenderer() {
-        final NoGroupRenderer outRenderer = new NoGroupRenderer();
-        outRenderer.setExpanded(false);
-        outRenderer.setAutoMargin(true);
-        return outRenderer;
+        final NoGroupRenderer renderer = new NoGroupRenderer();
+        renderer.setExpanded(false);
+        renderer.setAutoMargin(true);
+        return renderer;
     }
 
     private AbstractGalleryItemRenderer createItemRenderer() {
@@ -203,19 +203,17 @@ public class FinderPane {
         this.items.add(item);
     }
 
-    /**
-     * Returns this gallery's selected item.
+    /** Returns this gallery's selected item.
      *
-     * @return {@link GalleryItemAdapter} the selected item, may be
-     *         <code>null</code> if the gallery contains no items
-     */
-    public GalleryItemAdapter getSelected() {
+     * @return Optional&lt;GalleryItemAdapter> the selected item, may be <code>null</code> if the gallery contains no
+     *         items */
+    public Optional<GalleryItemAdapter> getSelected() {
         if (this.gallery.getSelectionCount() == 0) {
             this.lastSelected = null;
-            return null;
+            return Optional.empty();
         }
         this.lastSelected = this.gallery.getSelection()[0];
-        return (GalleryItemAdapter) this.lastSelected;
+        return Optional.ofNullable((GalleryItemAdapter) this.lastSelected);
     }
 
     protected boolean checkSelctionChanged() {
@@ -287,15 +285,19 @@ public class FinderPane {
         public ItemAdapter getRelationsItem() {
             return this.item;
         }
+
+        public boolean isEqual(final GalleryItemAdapter other) {
+            return this.item.equals(other.getRelationsItem());
+        }
     }
 
     private class PaneFocusListener implements FocusListener {
         @Override
         public void focusGained(final FocusEvent event) {
             setSelectionColor(COLOR_TEXT_SELECTION_ON, COLOR_BACK_FOCUS_ON);
-            final GalleryItemAdapter selected = getSelected();
-            if (selected != null) {
-                FinderPane.this.callback.selectionChange(selected.getRelationsItem());
+            final Optional<GalleryItemAdapter> selected = getSelected();
+            if (selected.isPresent()) {
+                FinderPane.this.callback.selectionChange(selected.get().getRelationsItem());
             }
         }
 
@@ -304,10 +306,10 @@ public class FinderPane {
             setSelectionColor(COLOR_TEXT_SELECTION_OFF, COLOR_BACK_FOCUS_OFF);
         }
 
-        private void setSelectionColor(final Color inTextColor, final Color inBgColor) {
-            final ListItemRenderer lRenderer = (ListItemRenderer) FinderPane.this.gallery.getItemRenderer();
-            lRenderer.setSelectionForegroundColor(inTextColor);
-            lRenderer.setSelectionBackgroundColor(inBgColor);
+        private void setSelectionColor(final Color textColor, final Color bgColor) {
+            final ListItemRenderer renderer = (ListItemRenderer) FinderPane.this.gallery.getItemRenderer();
+            renderer.setSelectionForegroundColor(textColor);
+            renderer.setSelectionBackgroundColor(bgColor);
 
             final GalleryItem[] selection = FinderPane.this.gallery.getSelection();
             if (selection.length > 0) {
@@ -331,14 +333,18 @@ public class FinderPane {
                         return;
                     }
                     // handle selection change by arrow up/down etc.
-                    if (checkSelctionChanged()) {
-                        handleSelection(getSelected());
-                    }
-                    // handle selection change by first chars
-                    final int lIndex = FinderPane.this.items.search(event.character, getSelected(),
-                            event.time & TIME_LONG);
-                    if (lIndex >= 0) {
-                        handleSelection(FinderPane.this.gallery.getItem(0).getItem(lIndex));
+                    final boolean selectionChange = checkSelctionChanged();
+                    final Optional<GalleryItemAdapter> selected = getSelected();
+                    if (selected.isPresent()) {
+                        if (selectionChange) {
+                            handleSelection(selected.get());
+                        }
+                        // handle selection change by first chars
+                        final int index = FinderPane.this.items.search(event.character, selected.get(),
+                                event.time & TIME_LONG);
+                        if (index >= 0) {
+                            handleSelection(FinderPane.this.gallery.getItem(0).getItem(index));
+                        }
                     }
                     break;
             }

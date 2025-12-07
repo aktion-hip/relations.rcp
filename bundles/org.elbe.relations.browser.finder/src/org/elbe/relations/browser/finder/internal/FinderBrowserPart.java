@@ -275,20 +275,23 @@ public class FinderBrowserPart implements IRelationsBrowser {
 
         @Override
         public void selectionChange(final ItemAdapter item) {
-            final FinderPane lPreviousFocus = FinderBrowserPart.this.focusPane;
+            final FinderPane previousFocus = FinderBrowserPart.this.focusPane;
             FinderBrowserPart.this.eventBroker.send(RelationsConstants.TOPIC_TO_BROWSER_MANAGER_SET_SELECTED,
                     new SelectedItemChangeEvent(item, FinderBrowserPart.this));
-            if (FinderBrowserPart.this.focusPane != lPreviousFocus) {
+            if (FinderBrowserPart.this.focusPane != previousFocus) {
                 FinderBrowserPart.this.focusPane.setFocusEnforced();
             }
         }
 
         @Override
         public void editSelected(final FinderPane pane) {
-            FinderBrowserPart.this.eventBroker.send(RelationsConstants.TOPIC_TO_BROWSER_MANAGER_SET_SELECTED,
-                    new SelectedItemChangeEvent(pane.getSelected().getRelationsItem(), FinderBrowserPart.this));
-            FinderBrowserPart.this.handlerService.executeHandler(
-                    new ParameterizedCommand(FinderBrowserPart.this.commandManager.getCommand(ICommandIds.CMD_ITEM_EDIT), null));
+            pane.getSelected().ifPresent(sel -> {
+                FinderBrowserPart.this.eventBroker.send(RelationsConstants.TOPIC_TO_BROWSER_MANAGER_SET_SELECTED,
+                        new SelectedItemChangeEvent(sel.getRelationsItem(), FinderBrowserPart.this));
+                FinderBrowserPart.this.handlerService.executeHandler(
+                        new ParameterizedCommand(
+                                FinderBrowserPart.this.commandManager.getCommand(ICommandIds.CMD_ITEM_EDIT), null));
+            });
         }
     }
 

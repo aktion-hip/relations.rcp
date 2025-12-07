@@ -15,6 +15,7 @@
 
 # Eclipse #
 **/.externalToolBuilders
+**/.polyglot.META-INF
 
 # Log file
 *.log

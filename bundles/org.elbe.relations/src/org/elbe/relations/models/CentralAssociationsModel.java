@@ -36,11 +36,9 @@ import org.hip.kernel.exc.VException;
 
 import jakarta.inject.Inject;
 
-/**
- * Set of all models related to the selected and centered model.
+/** Set of all models related to the selected and centered model.
  *
- * @author Benno Luthiger
- */
+ * @author Benno Luthiger */
 @SuppressWarnings("restriction")
 public class CentralAssociationsModel extends AbstractAssociationsModel implements IAssociationsModel {
     private Collection<IRelation> relations;
@@ -67,18 +65,13 @@ public class CentralAssociationsModel extends AbstractAssociationsModel implemen
         return createCentralAssociationsModel(adapted, context);
     }
 
-    /**
-     * Factory method to create an instance of
-     * <code>CentralAssociationsModel</code>.
+    /** Factory method to create an instance of <code>CentralAssociationsModel</code>.
      *
-     * @param inItem
-     *            {@link ItemAdapter}
-     * @param inContext
-     *            {@link IEclipseContext}
+     * @param inItem {@link ItemAdapter}
+     * @param inContext {@link IEclipseContext}
      * @return {@link CentralAssociationsModel}
      * @throws SQLException
-     * @throws VException
-     */
+     * @throws VException */
     public static CentralAssociationsModel createCentralAssociationsModel(
             final ItemAdapter inItem, final IEclipseContext inContext)
                     throws VException, SQLException {
@@ -89,14 +82,11 @@ public class CentralAssociationsModel extends AbstractAssociationsModel implemen
         return outModel;
     }
 
-    /**
-     * This method extends the super class implementation.
+    /** This method extends the super class implementation.
      *
-     * @param inItem
-     *            ItemAdapter the focus (i.e. central) item.
+     * @param inItem ItemAdapter the focus (i.e. central) item.
      * @throws VException
-     * @throws SQLException
-     */
+     * @throws SQLException */
     @Override
     protected void initialize(final ItemAdapter inItem)
             throws VException, SQLException {
@@ -131,11 +121,9 @@ public class CentralAssociationsModel extends AbstractAssociationsModel implemen
         return relation;
     }
 
-    /**
-     * Returns a list containing both the center and the related items.
+    /** Returns a list containing both the center and the related items.
      *
-     * @return List<ItemAdapter> of ItemAdapter and IRelation
-     */
+     * @return List<ItemAdapter> of ItemAdapter and IRelation */
     public List<ItemAdapter> getAllItems() {
         final List<ItemAdapter> outList = new ArrayList<>();
         outList.add(getFocusedItem());
@@ -143,52 +131,41 @@ public class CentralAssociationsModel extends AbstractAssociationsModel implemen
         return outList;
     }
 
-    /**
-     * Returns the list containing the related items.
+    /** Returns the list containing the related items.
      *
-     * @return List<ItemAdapter> of ItemAdapter and IRelation
-     */
+     * @return List<ItemAdapter> of ItemAdapter and IRelation */
     public List<ItemAdapter> getRelatedItems() {
         return this.related;
     }
 
-    /**
-     * Notify listeners about changes
+    /** Notify listeners about changes
      *
      * @throws SQLException
-     * @throws VException
-     */
+     * @throws VException */
     @Override
     protected void afterSave() throws VException, SQLException {
         initialize(getFocusedItem());
-        this.eventBroker.post(RelationsConstants.TOPIC_DB_CHANGED_CREATED,
-                getFocusedItem().getUniqueID());
+        this.eventBroker.post(RelationsConstants.TOPIC_DB_CHANGED_CREATED, getFocusedItem().getUniqueID());
     }
 
-    /**
-     * @see IAssociationsModel#undoChanges()
-     */
+    /** @see IAssociationsModel#undoChanges() */
     @Override
     public void undoChanges() throws BOMException {
         try {
             initialize(getFocusedItem());
-        }
-        catch (VException | SQLException exc) {
+        } catch (VException | SQLException exc) {
             throw new BOMException(exc.getMessage());
         }
 
     }
 
-    /**
-     * Updates the model with the actual state in the DB table.
+    /** Updates the model with the actual state in the DB table.
      *
-     * @throws BOMException
-     */
+     * @throws BOMException */
     public void refresh() throws BOMException {
         try {
             afterSave();
-        }
-        catch (VException | SQLException exc) {
+        } catch (VException | SQLException exc) {
             throw new BOMException(exc.getMessage());
         }
 
