@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Relations Intro
+Bundle-SymbolicName: org.elbe.relations.intro;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Import-Package: org.eclipse.e4.ui.workbench
+Require-Bundle: org.eclipse.ui.intro,
+ org.eclipse.ui.intro.universal,
+ org.eclipse.ui
+Automatic-Module-Name: org.elbe.relations.intro
+Bundle-RequiredExecutionEnvironment: JavaSE-21

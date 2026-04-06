@@ -323,4 +323,8 @@ POSSIBILITY OF SUCH DAMAGES.
          id="org.elbe.relations.help"
          version="0.0.0"/>
 
+   <plugin
+         id="org.elbe.relations.intro"
+         version="0.0.0"/>
+
 </feature>

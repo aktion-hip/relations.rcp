@@ -1,6 +1,6 @@
 /***************************************************************************
  * This package is part of Relations application.
- * Copyright (C) 2004-2016, Benno Luthiger
+ * Copyright (C) 2004-2025, Benno Luthiger
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -42,13 +42,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.elbe.relations.Activator;
 import org.elbe.relations.RelationsMessages;
 
-/**
- * Instances represent registered wizards.
+/** Instances represent registered wizards.
  *
- * @author Luthiger <br />
- *         see org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
- */
-@SuppressWarnings("restriction")
+ * @author Luthiger <br>
+ *         see org.eclipse.ui.internal.dialogs.WorkbenchWizardElement */
 public class WorkbenchWizardElement extends WorkbenchAdapter
 implements IAdaptable, IWizardDescriptor {
 
@@ -65,23 +62,19 @@ implements IAdaptable, IWizardDescriptor {
 
     private final IEclipseContext context;
 
-    /**
-     * WorkbenchWizardElement constructor.
+    /** WorkbenchWizardElement constructor.
      *
-     * @param inConfiguration
-     *            {@link IConfigurationElement}
-     * @param inContext
-     *            {@link IEclipseContext}
-     */
-    public WorkbenchWizardElement(final IConfigurationElement inConfiguration,
-            final IEclipseContext inContext) {
-        this.configuration = inConfiguration;
-        this.context = inContext;
+     * @param configuration {@link IConfigurationElement}
+     * @param context {@link IEclipseContext} */
+    public WorkbenchWizardElement(final IConfigurationElement configuration,
+            final IEclipseContext context) {
+        this.configuration = configuration;
+        this.context = context;
         this.id = this.configuration.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
-    private String getAttributeChecked(final String inAttributeName) {
-        final String out = this.configuration.getAttribute(inAttributeName);
+    private String getAttributeChecked(final String attributeName) {
+        final String out = this.configuration.getAttribute(attributeName);
         return out == null ? "" : out; //$NON-NLS-1$
     }
 
@@ -96,7 +89,7 @@ implements IAdaptable, IWizardDescriptor {
     }
 
     @Override
-    public String getLabel(final Object inObject) {
+    public String getLabel(final Object object) {
         return getAttributeChecked(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
@@ -109,7 +102,7 @@ implements IAdaptable, IWizardDescriptor {
     }
 
     @Override
-    public ImageDescriptor getImageDescriptor(final Object inElement) {
+    public ImageDescriptor getImageDescriptor(final Object element) {
         return getImageDescriptor();
     }
 
@@ -245,12 +238,11 @@ implements IAdaptable, IWizardDescriptor {
         return (IWizardCategory) getParent(this);
     }
 
-    public void consolidateCategory(final WizardCollectionElement inWizards) {
-        final WizardCollectionElement lCategory = inWizards
-                .findCategory(this.configuration.getAttribute(
-                        IWorkbenchRegistryConstants.ATT_CATEGORY));
-        lCategory.add(this);
-        setParent(lCategory);
+    public void consolidateCategory(final WizardCollectionElement wizards) {
+        final WizardCollectionElement category = wizards.findCategory(this.configuration.getAttribute(
+                IWorkbenchRegistryConstants.ATT_CATEGORY));
+        category.add(this);
+        setParent(category);
     }
 
     /**
@@ -288,30 +280,24 @@ implements IAdaptable, IWizardDescriptor {
      * @throws CoreException
      */
     public Object createExecutableExtension() throws CoreException {
-        return createExtension(this.configuration,
-                IWorkbenchRegistryConstants.ATT_CLASS);
+        return createExtension(this.configuration, IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
-    private Object createExtension(final IConfigurationElement inElement,
-            final String inClassAttribute) throws CoreException {
+    private Object createExtension(final IConfigurationElement element, final String classAttribute)
+            throws CoreException {
         try {
-            if (BundleUtility.isActivated(inElement.getDeclaringExtension()
-                    .getNamespaceIdentifier())) {
-                return createExtension(inElement, inClassAttribute, this.context);
+            if (BundleUtility.isActivated(element.getDeclaringExtension().getNamespaceIdentifier())) {
+                return createExtension(element, classAttribute, this.context);
             }
 
             final Object[] out = new Object[1];
             final CoreException[] exc = new CoreException[1];
-            BusyIndicator.showWhile(null, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        out[0] = createExtension(inElement, inClassAttribute,
-                                WorkbenchWizardElement.this.context);
-                    }
-                    catch (final CoreException e) {
-                        exc[0] = e;
-                    }
+            BusyIndicator.showWhile(null, () -> {
+                try {
+                    out[0] = createExtension(element, classAttribute, WorkbenchWizardElement.this.context);
+                }
+                catch (final CoreException e) {
+                    exc[0] = e;
                 }
             });
             if (exc[0] != null) {
@@ -329,12 +315,10 @@ implements IAdaptable, IWizardDescriptor {
         }
     }
 
-    private Object createExtension(final IConfigurationElement inElement,
-            final String inClassAttribute, final IEclipseContext inContext)
-                    throws CoreException {
-        final Object out = inElement
-                .createExecutableExtension(inClassAttribute);
-        ContextInjectionFactory.inject(out, inContext);
+    private Object createExtension(final IConfigurationElement element, final String classAttribute,
+            final IEclipseContext context) throws CoreException {
+        final Object out = element.createExecutableExtension(classAttribute);
+        ContextInjectionFactory.inject(out, context);
         return out;
     }
 

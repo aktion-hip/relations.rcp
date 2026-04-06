@@ -121,7 +121,7 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_P9JU0B68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.preferences" label="%handledmenuitem.label.16" command="_-6q8MB7EEeK3tP7nd1gQtA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-axcHRYwEeKaY4i-iZlKSg" elementId="help" label="%menu.label.help">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_8T40IEozEeOlq5sfE9Wmlw" elementId="org.elbe.relations.openIntro" label="%command.show.welcome" iconURI="platform:/plugin/org.eclipse.ui.intro/icons/welcome16.png" command="_HGMgIEo0EeOlq5sfE9Wmlw"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_8T40IEozEeOlq5sfE9Wmlw" elementId="org.eclipse.ui.help.quickStartAction" label="%command.show.welcome" iconURI="platform:/plugin/org.eclipse.ui.intro/icons/welcome16.png" command="_4iC8EDDGEfGl_dCuvLkdnQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_2KM7gEcyEeOLY8H4-5VcYg" elementId="" label="%handledmenuitem.label.18" command="_AKmocEc-EeOLY8H4-5VcYg"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_GlSN4EczEeOLY8H4-5VcYg" elementId="org.elbe.relations.menuseparator.help.help"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_n0Q6IHuyEeKuqp0Z70q4AA" elementId="org.eclipse.ui.help.helpContents" label="%handledmenuitem.label.help" iconURI="platform:/plugin/org.elbe.relations/icons/help_contents.png" command="_7hxZQM4xEfCrsp01wQTeHA"/>
@@ -133,7 +133,6 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-axcHhYwEeKaY4i-iZlKSg" elementId="org.elbe.relations.show.about" label="%menu.item.about" iconURI="platform:/plugin/org.elbe.relations/icons/relations.gif" command="_IpzNALuZEeWV0esgnY2lLg"/>
       </children>
     </mainMenu>
-    <sharedElements xsi:type="basic:Part" xmi:id="_c43GwEoqEeOlq5sfE9Wmlw" elementId="org.eclipse.ui.internal.introview" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="%command.show.welcome"/>
     <trimBars xmi:id="_-axcIxYwEeKaY4i-iZlKSg" elementId="org.elbe.relations.trimbar.tools.top">
       <children xsi:type="menu:ToolBar" xmi:id="_WztUwBY8EeKrB9z8C0WsMg" elementId="relations.toolbar:text.styling" accessibilityPhrase="Styles">
         <children xsi:type="menu:ToolControl" xmi:id="_vCEPUC_cEeKq8LHy6ojJyw" elementId="relations.toolbar:text.font.size" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.internal.style.ResizeFontControl"/>
@@ -228,7 +227,7 @@
   <handlers xmi:id="_5HqxcDm1EeinGNvAVK3xcg" elementId="org.elbe.relations.handler.cloud.export" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.CloudExportHandler" command="_Asr3gDm1EeinGNvAVK3xcg"/>
   <handlers xmi:id="_8wF1UD0FEeiIr6m_H0bkTw" elementId="org.elbe.relations.handler.cloud.help" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.CloudConfigurationHelper" command="_iPAjUD0FEeiIr6m_H0bkTw"/>
   <handlers xmi:id="_N62-ANHjEfCXd_dERf2xNA" elementId="org.eclipse.ui.help.helpContents" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.HelpContentHandler" command="_7hxZQM4xEfCrsp01wQTeHA"/>
-  <handlers xmi:id="__BDBYNHzEfCXd_dERf2xNA" elementId="org.elbe.relations.openIntro" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.OpenIntroHandler" command="_HGMgIEo0EeOlq5sfE9Wmlw"/>
+  <handlers xmi:id="_O8VwIDDNEfGl_dCuvLkdnQ" elementId="org.elbe.relations.handler.intro" command="_4iC8EDDGEfGl_dCuvLkdnQ"/>
   <bindingTables xmi:id="_gRRkADyfEeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.app" bindingContext="_vLHKgDv5EeKA7_T_MYQC0Q"/>
   <bindingTables xmi:id="_8u67EDx4EeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.main" bindingContext="_2rKewDv9EeKA7_T_MYQC0Q">
     <bindings xmi:id="_-axcDRYwEeKaY4i-iZlKSg" keySequence="M1+Q" command="_-axcChYwEeKaY4i-iZlKSg">
@@ -417,7 +416,6 @@
   </commands>
   <commands xmi:id="_F7qZQKU5EeKgdtHsUDGjpQ" elementId="org.elbe.relations.cmd.software.install" commandName="%command.commandname.43" description="%command.description.27" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_AKmocEc-EeOLY8H4-5VcYg" elementId="org.elbe.relations.show.view" commandName="%command.commandname.44" description="%command.description.28" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
-  <commands xmi:id="_HGMgIEo0EeOlq5sfE9Wmlw" elementId="org.elbe.relations.openIntro" commandName="%command.show.welcome" description="%command.welcome.desc" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_zJHGgFCdEeOBt4dmztEOKA" elementId="org.elbe.relations.command.open.url" commandName="%command.commandname.46" description="%command.description.30" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_HZDC8ExeEeOnfLACFZUbew" elementId="org.elbe.relations.command.activate.term" commandName="%command.activate.terms" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_RUA3QExeEeOnfLACFZUbew" elementId="org.elbe.relations.command.activate.text" commandName="%command.activate.texts" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
@@ -433,6 +431,7 @@
   <commands xmi:id="_Asr3gDm1EeinGNvAVK3xcg" elementId="org.elbe.relations.command.cloud.export" commandName="%command.export.cloud" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_iPAjUD0FEeiIr6m_H0bkTw" elementId="org.elbe.relations.command.cloud.help" commandName="%command.help.cloud" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_7hxZQM4xEfCrsp01wQTeHA" elementId="org.eclipse.ui.help.helpContents" commandName="Help Contents" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
+  <commands xmi:id="_4iC8EDDGEfGl_dCuvLkdnQ" elementId="org.eclipse.ui.help.quickStartAction" commandName="%command.show.welcome" description="%command.welcome.desc" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <addons xmi:id="_-axcBBYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_-axcBRYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_-axcBhYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

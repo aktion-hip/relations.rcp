@@ -743,31 +743,10 @@
       </key>
    </extension>
    <extension
-         point="org.eclipse.ui.intro">
-      <intro
-            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            icon="icons/relations.gif"
-            id="org.elbe.relations.rcp.intro.CustomIntro"
-            label="Relations Welcome">
-      </intro>
-      <introProductBinding
-            introId="org.elbe.relations.rcp.intro.CustomIntro"
-            productId="org.elbe.relations.product">
-      </introProductBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.intro.config">
-      <config
-            content="intro/introContent.xml"
-            id="org.elbe.relations.intro.config"
-            introId="org.elbe.relations.rcp.intro.CustomIntro">
-         <presentation
-               home-page-id="org.elbe.relations.intro.root"
-               standby-page-id="root">
-            <implementation
-                  kind="html">
-            </implementation>
-         </presentation>
-      </config>
+         id="org.elbe.relations.startup"
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.elbe.relations.utility.IntroDisplayStartup">
+      </startup>
    </extension>
 </plugin>

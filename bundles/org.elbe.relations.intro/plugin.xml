@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            icon="$nl$/icons/welcome.gif"
+            id="org.eclipse.intro.minimal"
+            label="Minimal Intro"/>
+      <introProductBinding
+            introId="org.eclipse.intro.minimal"
+            productId="org.elbe.relations.product">
+      </introProductBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            content="$nl$/intro/introContent.xml"
+            id="org.eclipse.intro.minimal.config"
+            introId="org.eclipse.intro.minimal">
+         <presentation
+               home-page-id="root" standby-page-id="standby">
+            <implementation
+                  kind="html">
+            </implementation>
+         </presentation>
+      </config>
+   </extension>
+
+</plugin>

@@ -23,4 +23,11 @@
             file="tocwhatsNew.xml">
       </toc>
    </extension>
+   <extension
+         id="org.elbe.relations.help.startup"
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.elbe.relations.utility.IntroDisplayStartup">
+      </startup>
+   </extension>
 </plugin>
