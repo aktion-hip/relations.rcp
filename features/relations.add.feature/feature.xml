@@ -117,4 +117,8 @@
          id="com.sun.el.javax.el"
          version="0.0.0"/>
 
+   <plugin
+         id="org.osgi.service.jdbc"
+         version="0.0.0"/>
+
 </feature>

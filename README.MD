@@ -4,7 +4,7 @@ Source code for the Relations Application, based on Eclipse e4 RCP.
 
 ## Steps to build
 
-- git clone
+- `git clone https://github.com/aktion-hip/relations.rcp.git`
 - cd `relations.rcp`
 - `mvn clean verify`
 
