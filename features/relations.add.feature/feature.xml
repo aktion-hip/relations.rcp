@@ -121,4 +121,8 @@
          id="org.osgi.service.jdbc"
          version="0.0.0"/>
 
+   <plugin
+         id="org.apache.servicemix.bundles.poi"
+         version="0.0.0"/>
+
 </feature>
