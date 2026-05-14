@@ -37,7 +37,6 @@
 		<unit id="org.eclipse.orbit.maven.org.jdom.feature.group" version="4.34.0"/>
 		<unit id="org.apache.derby" version="0.0.0"/>
 	</location>
-	<location path="C:\APPS\ID_Apps\Code\relations\relations-add-target" type="Directory"/>
 	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<repository location="https://download.eclipse.org/staging/2023-06"/>
 		<unit id="org.w3c.css.sac" version="1.3.1.v200903091627"/>
@@ -73,6 +72,58 @@
 		<unit id="org.eclipse.ecf.core.ssl.feature.feature.group" version="1.1.501.v20230507-1921"/>
 		<unit id="org.eclipse.ecf.filetransfer.httpclient5.feature.feature.group" version="1.1.702.v20231114-1017"/>
 		<unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="1.1.402.v20231021-2127"/>
+	</location>
+	<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+		<dependencies>
+			<dependency>
+				<groupId>com.dropbox.core</groupId>
+				<artifactId>dropbox-core-sdk</artifactId>
+				<version>7.0.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>com.mysql</groupId>
+				<artifactId>mysql-connector-j</artifactId>
+				<version>9.7.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna-platform-jpms</artifactId>
+				<version>5.18.1</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+				<version>5.18.1</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>net.sourceforge.htmlcleaner</groupId>
+				<artifactId>htmlcleaner</artifactId>
+				<version>2.29</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derby</artifactId>
+				<version>10.17.1.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.service.jdbc</artifactId>
+				<version>1.1.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+			    <groupId>com.google.code.findbugs</groupId>
+			    <artifactId>jsr305</artifactId>
+			    <version>3.0.2</version>
+				<type>jar</type>
+			</dependency>
+		</dependencies>
 	</location>
 </locations>
 	<implicitDependencies>
