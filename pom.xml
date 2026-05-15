@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>org.elbe.relations</groupId>
 	<artifactId>relations.rcp</artifactId>
 	<version>2.4.0</version>
 	<packaging>pom</packaging>
-	
+
 	<properties>
 		<!-- Skip the deployment here, submodules can override this property -->
 		<!--maven.deploy.skip>true</maven.deploy.skip-->
-		
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-   <modules>
-      <module>bundles</module>
-      <module>features</module>
-      <module>products</module>
-   </modules>
 
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.eclipse.tycho</groupId>
-            <artifactId>tycho-maven-plugin</artifactId>
-            <version>${tycho-version}</version>
-            <extensions>true</extensions>
-         </plugin>
-         <plugin>
-            <groupId>org.eclipse.tycho</groupId>
-            <artifactId>target-platform-configuration</artifactId>
-            <version>${tycho-version}</version>
-            <configuration>
-               <target>
-                  <file>../../target-platform/target-platform.target</file>
-               </target>
+	<modules>
+		<module>bundles</module>
+		<module>features</module>
+		<module>products</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<target>
+						<file>../../target-platform/target-platform.target</file>
+					</target>
 					<!-- Optionally, set the Java version you are using-->
 					<executionEnvironment>JavaSE-21</executionEnvironment>
 					<environments>
@@ -55,10 +57,32 @@
 							<ws>cocoa</ws>
 							<arch>x86_64</arch>
 						</environment>
-					</environments>            
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
+					</environments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec executable="jpackage">
+									<arg value="--type" /><arg value="dmg" />
+									<arg value="--name" /><arg value="Relations RCP" />
+									<arg value="--app-image" /><arg value="${project.build.directory}/products/relations.rcp.product/macosx/cocoa/x86_64/Eclipse.app" />
+									<arg value="--dest" /><arg value="${project.build.directory}" />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
