@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Relations" uid="relations.rcp.product" id="org.elbe.relations.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="2.4.0.qualifier" type="features" includeLaunchers="true" includeJRE="true" autoIncludeRequirements="true">
+<product name="Relations" uid="relations.rcp.product" id="org.elbe.relations.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="2.4.1.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/org.elbe.relations/icons/aboutRelations.png"/>
@@ -309,6 +309,7 @@ POSSIBILITY OF SUCH DAMAGES.
       <plugin id="org.elbe.relations.help" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.indexer.lucene" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.mysql" autoStart="false" startLevel="4" />
+      <plugin id="org.elbe.relations.peer.libp2p" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.print.dft" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.print.doc" autoStart="false" startLevel="4" />
       <plugin id="org.elbe.relations.print.odt" autoStart="false" startLevel="4" />

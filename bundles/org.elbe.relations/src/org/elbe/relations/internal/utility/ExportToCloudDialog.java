@@ -45,6 +45,7 @@ public class ExportToCloudDialog extends Dialog {
 	private final ICloudProviderConfig cloudProviderConfig;
 	private final boolean hasEvents;
 	private boolean incrementalFlag;
+	private Label sharedLogNote;
 
 	/**
 	 * ExportToCloudDialog constructor.
@@ -89,26 +90,39 @@ public class ExportToCloudDialog extends Dialog {
 		final Button btnIncremental = new Button(group, SWT.RADIO);
 		btnIncremental.setText(RelationsMessages.getString("ExportToCloudDialog.btn.incr.lbl")); //$NON-NLS-1$
 		btnIncremental.addSelectionListener(widgetSelectedAdapter(e -> {
-			this.incrementalFlag = true;
+			setIncremental(true);
 		}));
 
 		final Button btnFull = new Button(group, SWT.RADIO);
 		btnFull.setText(RelationsMessages.getString("ExportToCloudDialog.btn.full.lbl")); //$NON-NLS-1$
 		btnFull.addSelectionListener(widgetSelectedAdapter(e -> {
-			this.incrementalFlag = false;
+			setIncremental(false);
 		}));
+
+		this.sharedLogNote = new Label(composite, SWT.WRAP);
+		this.sharedLogNote.setLayoutData(GridDataFactory.fillDefaults()
+				.span(2, 1).grab(true, false).hint(300, SWT.DEFAULT).create());
 
 		if (this.hasEvents) {
 			btnIncremental.setSelection(true);
-			this.incrementalFlag = true;
+			setIncremental(true);
 		} else {
 			btnFull.setSelection(true);
 			btnIncremental.setSelection(false);
 			btnIncremental.setEnabled(false);
-			this.incrementalFlag = false;
+			setIncremental(false);
 		}
 
 		return composite;
+	}
+
+	private void setIncremental(final boolean incremental) {
+		this.incrementalFlag = incremental;
+		// the change log is shared with peer export, so tell the user it is consumed here
+		this.sharedLogNote.setText(incremental
+				? RelationsMessages.getString("ExportToCloudDialog.msg.shared.log") //$NON-NLS-1$
+				: ""); //$NON-NLS-1$
+		this.sharedLogNote.getParent().layout(true);
 	}
 
 	@Override
@@ -120,7 +134,7 @@ public class ExportToCloudDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(340, 180);
+		return new Point(420, 260);
 	}
 
 	/**

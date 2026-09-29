@@ -118,6 +118,7 @@
       <children xsi:type="menu:Menu" xmi:id="_-G3PwB67EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility" label="%menu.label.utility">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_L_o9cB68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.reindex" label="%handledmenuitem.label.15" command="_h9_rIB68EeK3tP7nd1gQtA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_ZAGNgDm0EeinGNvAVK3xcg" elementId="org.elbe.relations.menu.utility.cloud.export" label="%handledmenuitem.label.cloud" command="_Asr3gDm1EeinGNvAVK3xcg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_q_XP8LgaEfG8486asxO_rQ" elementId="org.elbe.relations.menu.utility.p2p" label="%handledmenuitem.label.p2p" command="_HyiD4LgcEfG8486asxO_rQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_P9JU0B68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.preferences" label="%handledmenuitem.label.16" command="_-6q8MB7EEeK3tP7nd1gQtA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-axcHRYwEeKaY4i-iZlKSg" elementId="help" label="%menu.label.help">
@@ -228,6 +229,7 @@
   <handlers xmi:id="_8wF1UD0FEeiIr6m_H0bkTw" elementId="org.elbe.relations.handler.cloud.help" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.CloudConfigurationHelper" command="_iPAjUD0FEeiIr6m_H0bkTw"/>
   <handlers xmi:id="_N62-ANHjEfCXd_dERf2xNA" elementId="org.eclipse.ui.help.helpContents" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.HelpContentHandler" command="_7hxZQM4xEfCrsp01wQTeHA"/>
   <handlers xmi:id="_O8VwIDDNEfGl_dCuvLkdnQ" elementId="org.elbe.relations.handler.intro" command="_4iC8EDDGEfGl_dCuvLkdnQ"/>
+  <handlers xmi:id="_-A9msLgcEfG8486asxO_rQ" elementId="org.elbe.relations.handler.p2p.export" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.PeerToPeerUpload" command="_HyiD4LgcEfG8486asxO_rQ"/>
   <bindingTables xmi:id="_gRRkADyfEeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.app" bindingContext="_vLHKgDv5EeKA7_T_MYQC0Q"/>
   <bindingTables xmi:id="_8u67EDx4EeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.main" bindingContext="_2rKewDv9EeKA7_T_MYQC0Q">
     <bindings xmi:id="_-axcDRYwEeKaY4i-iZlKSg" keySequence="M1+Q" command="_-axcChYwEeKaY4i-iZlKSg">
@@ -432,6 +434,7 @@
   <commands xmi:id="_iPAjUD0FEeiIr6m_H0bkTw" elementId="org.elbe.relations.command.cloud.help" commandName="%command.help.cloud" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_7hxZQM4xEfCrsp01wQTeHA" elementId="org.eclipse.ui.help.helpContents" commandName="Help Contents" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <commands xmi:id="_4iC8EDDGEfGl_dCuvLkdnQ" elementId="org.eclipse.ui.help.quickStartAction" commandName="%command.show.welcome" description="%command.welcome.desc" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
+  <commands xmi:id="_HyiD4LgcEfG8486asxO_rQ" elementId="org.elbe.relations.command.p2p.export" commandName="%command.export.p2p" category="_U-K2AFNyEeKu5ZyUiHaoHg"/>
   <addons xmi:id="_-axcBBYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_-axcBRYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_-axcBhYwEeKaY4i-iZlKSg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

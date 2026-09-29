@@ -9,7 +9,9 @@
 		<unit id="org.eclipse.e4.ui.workbench" version="0.0.0"/>
 		<unit id="org.eclipse.help.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
-		<unit id="org.eclipse.wst.web_ui.feature.feature.group" version="0.0.0"/>		
+		<unit id="org.eclipse.wst.web_ui.feature.feature.group" version="0.0.0"/>
+	    <!-- Servlet API dependency -->
+	    <unit id="jakarta.servlet-api" version="0.0.0"/>
 	</location>
 	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<repository location="https://download.eclipse.org/releases/2025-09"/>
@@ -36,6 +38,10 @@
 		<unit id="org.eclipse.orbit.maven.jdom2.feature.group" version="4.34.0"/>
 		<unit id="org.eclipse.orbit.maven.org.jdom.feature.group" version="4.34.0"/>
 		<unit id="org.apache.derby" version="0.0.0"/>
+	    <!-- Required dependencies if not already provided elsewhere -->
+	    <unit id="jakarta.servlet-api" version="0.0.0"/>
+	    <unit id="jakarta.el-api" version="0.0.0"/>
+	    <unit id="jakarta.servlet.jsp-api" version="0.0.0"/>		
 	</location>
 	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<repository location="https://download.eclipse.org/staging/2023-06"/>
@@ -48,10 +54,6 @@
 		<unit id="org.eclipse.draw2d.feature.group" version="3.25.0.202508011427"/>
 		<unit id="org.eclipse.gef.feature.group" version="3.25.0.202508011427"/>
 		<unit id="org.eclipse.gef.sdk.feature.group" version="3.25.0.202508011427"/>
-	</location>
-	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<repository location="https://download.eclipse.org/nebula/releases/latest/"/>
-		<unit id="org.eclipse.nebula.feature.feature.group" version="3.3.0.202601240135"/>
 	</location>
 	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<repository location="https://download.eclipse.org/oomph/simrel-orbit/release/4.28.0"/>
@@ -73,12 +75,22 @@
 		<unit id="org.eclipse.ecf.filetransfer.httpclient5.feature.feature.group" version="1.1.702.v20231114-1017"/>
 		<unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="1.1.402.v20231021-2127"/>
 	</location>
+	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<repository location="https://download.eclipse.org/nebula/updates/release/3.4.0"/>
+		<unit id="org.eclipse.nebula.feature.feature.group" version="3.4.0.202606141240"/>
+	</location>
 	<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
 			<dependency>
 				<groupId>com.dropbox.core</groupId>
 				<artifactId>dropbox-core-sdk</artifactId>
 				<version>7.0.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>3.0.2</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -118,9 +130,9 @@
 				<type>jar</type>
 			</dependency>
 			<dependency>
-			    <groupId>com.google.code.findbugs</groupId>
-			    <artifactId>jsr305</artifactId>
-			    <version>3.0.2</version>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper</artifactId>
+				<version>11.0.26</version>
 				<type>jar</type>
 			</dependency>
 		</dependencies>

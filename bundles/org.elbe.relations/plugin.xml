@@ -118,6 +118,12 @@
             name="%page.prefs.name.cloud.config">
       </page>
       <page
+            category="org.elbe.relations.prefs"
+            class="org.elbe.relations.internal.preferences.PeerConfigPrefPage"
+            id="org.elbe.relations.prefs.peer"
+            name="%page.prefs.name.peer.config">
+      </page>
+      <page
             class="org.elbe.relations.internal.e4.keys.RelationsKeysPreferencePage"
             id="newKeysPreferencePage"
             name="%page.prefs.name.keys">

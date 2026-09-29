@@ -46,5 +46,6 @@ public class RelationsPreferenceInitializer extends AbstractPreferenceInitialize
         node.putInt(RelationsConstants.KEY_TEXT_FONT_SIZE, RelationsConstants.DFT_TEXT_FONT_SIZE);
         node.putInt(RelationsConstants.KEY_MAX_SEARCH_HITS, RelationsConstants.DFT_MAX_SEARCH_HITS);
         node.putInt(RelationsConstants.KEY_MAX_LAST_CHANGED, RelationsConstants.DFT_MAX_LAST_CHANGED);
+        node.putInt(RelationsConstants.PREFS_PEER_PORT, RelationsConstants.DFT_PEER_PORT);
     }
 }

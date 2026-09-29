@@ -34,14 +34,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.equinox.jsp.jasper"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.equinox.jsp.jasper.registry"
-         version="0.0.0"/>
-
-   <plugin
          id="javax.el-api"
          version="0.0.0"/>
 

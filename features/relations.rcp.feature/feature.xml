@@ -2,7 +2,7 @@
 <feature
       id="relations.rcp.feature"
       label="%featureName"
-      version="2.4.0.qualifier"
+      version="2.4.1.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -320,11 +320,7 @@ POSSIBILITY OF SUCH DAMAGES.
          version="0.0.0"/>
 
    <plugin
-         id="org.elbe.relations.help"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.elbe.relations.intro"
+         id="org.elbe.relations.peer.libp2p"
          version="0.0.0"/>
 
 </feature>

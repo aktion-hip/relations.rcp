@@ -230,9 +230,10 @@ public class ExportToCloudAction implements ICommand {
     }
 
     /**
-     * Special exporter for only the entries in the EventStore.
+     * Special exporter for only the entries in the EventStore. Shared with
+     * <code>ExportToPeerAction</code>.
      */
-    private static class EventStoreExport extends ZippedXMLExport {
+    static class EventStoreExport extends ZippedXMLExport {
         private final static String NL = System.getProperty("line.separator"); //$NON-NLS-1$
         private static final String NODE_EVENT_STORE = "EventStoreEntries"; //$NON-NLS-1$
 

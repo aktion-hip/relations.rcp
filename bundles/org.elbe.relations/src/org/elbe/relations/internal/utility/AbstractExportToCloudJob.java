@@ -94,6 +94,9 @@ public abstract class AbstractExportToCloudJob implements IRunnableWithProgress 
                 this.statusLine.showStatusLineMessage(
                         RelationsMessages.getString("AbstractExportToCloudJob.status.msg")) //$NON-NLS-1$
                         );
+                // 3) clear entries in EventStore, but only once the upload succeeded: the
+                // change log is shared with peer export and must survive a failed upload
+                new EventStoreChecker().clear();
             } else {
                 Display.getDefault().asyncExec(() ->
                 MessageDialog.openError(
@@ -102,9 +105,6 @@ public abstract class AbstractExportToCloudJob implements IRunnableWithProgress 
                         RelationsMessages.getString("AbstractExportToCloudJob.err.msg")) //$NON-NLS-1$
                         );
             }
-
-            // 3) clear entries in EventStore
-            new EventStoreChecker().clear();
         }
         catch (final IOException | SQLException exc) {
             this.log.error(exc, exc.getMessage());

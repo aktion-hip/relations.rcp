@@ -29,3 +29,18 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Claude Code local-only files
+.claude/settings.local.json
+.claude/mcp.json
+.claude/history/
+.claude/chats/
+.claude/cache/
+.claude/*.log
+
+# OpenSpec local state and runtime artifacts
+openspec/.cache/
+openspec/.tmp/
+openspec/build/
+openspec/local.yaml
+openspec/*.log
