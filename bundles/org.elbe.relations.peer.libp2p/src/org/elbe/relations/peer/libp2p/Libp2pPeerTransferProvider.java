@@ -21,7 +21,13 @@ package org.elbe.relations.peer.libp2p;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
+import org.elbe.relations.peer.libp2p.ExportSender.ExportFile;
+import org.elbe.relations.peer.libp2p.ExportSender.ExportFiles;
+import org.elbe.relations.peer.libp2p.ExportSender.Session;
+import org.elbe.relations.peer.libp2p.ExportSender.TransferObserver;
 import org.elbe.relations.services.IPeerConnectionApproval;
 import org.elbe.relations.services.IPeerSession;
 import org.elbe.relations.services.IPeerTransferListener;
@@ -36,7 +42,7 @@ import org.osgi.service.component.annotations.Component;
 import io.libp2p.core.crypto.PrivKey;
 
 /** The libp2p implementation of the <code>IPeerTransferProvider</code> service: TCP with the
- * Noise handshake, speaking <code>/relations/export/1.0.0</code> as specified in
+ * Noise handshake, speaking <code>/relations/sync/1.0.0</code> as specified in
  * <code>PROTOCOL.md</code>.
  *
  * @author lbenno */
@@ -89,7 +95,7 @@ public class Libp2pPeerTransferProvider implements IPeerTransferProvider {
     @Override
     public IPeerSession openSession(final int port, final PeerExport export,
             final IPeerConnectionApproval approval, final IPeerTransferListener listener)
-            throws PeerSessionException {
+                    throws PeerSessionException {
         final PrivKey identity;
         try {
             identity = this.identityStore.loadOrCreate();
@@ -98,13 +104,15 @@ public class Libp2pPeerTransferProvider implements IPeerTransferProvider {
             throw new PeerSessionException(PeerSessionException.Reason.NOT_STARTED, port, exc);
         }
 
-        final ExportOffer offer = new ExportOffer(toScope(export.getScope()), export.getFile(),
-                export.getName());
-        final ExportSender sender = new ExportSender(() -> offer, approval::approve, session -> {
-            final String peerId = session.getRemotePeerId();
-            listener.transferStarted(peerId);
-            session.getOutcome().thenAccept(outcome -> listener.transferEnded(peerId, toOutcome(outcome)));
-        });
+        final ExportSender sender;
+        try {
+            sender = new ExportSender(new RelationsExportFiles(export), approval::approve,
+                    new ListenerAdapter(listener));
+        }
+        catch (final LinkageError exc) {
+            // e.g. the JSON implementation cannot be loaded: fail now, not at the first connection
+            throw new PeerSessionException(PeerSessionException.Reason.NOT_STARTED, port, exc);
+        }
 
         final Libp2pTransferHost host = new Libp2pTransferHost();
         try {
@@ -119,10 +127,6 @@ public class Libp2pPeerTransferProvider implements IPeerTransferProvider {
         return new Libp2pPeerSession(host);
     }
 
-    private static TransferScope toScope(final PeerExport.Scope scope) {
-        return scope == PeerExport.Scope.INCREMENTAL ? TransferScope.INCREMENTAL : TransferScope.FULL;
-    }
-
     private static PeerTransferOutcome toOutcome(final TransferOutcome outcome) {
         return switch (outcome) {
             case COMPLETED -> PeerTransferOutcome.COMPLETED;
@@ -132,7 +136,59 @@ public class Libp2pPeerTransferProvider implements IPeerTransferProvider {
             case REJECTED_BY_RECEIVER -> PeerTransferOutcome.REJECTED_BY_RECEIVER;
             case INTERRUPTED -> PeerTransferOutcome.INTERRUPTED;
             case PROTOCOL_ERROR -> PeerTransferOutcome.PROTOCOL_ERROR;
+            case VERSION_MISMATCH -> PeerTransferOutcome.VERSION_MISMATCH;
+            case SCOPE_MISMATCH -> PeerTransferOutcome.SCOPE_MISMATCH;
         };
+    }
+
+    // ===
+
+    /** Forwards the sender's transfers to the service's listener. */
+    private static final class ListenerAdapter implements TransferObserver {
+        private final IPeerTransferListener listener;
+
+        ListenerAdapter(final IPeerTransferListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void started(final Session session) {
+            final String peerId = session.getRemotePeerId();
+            this.listener.transferStarted(peerId);
+            session.getOutcome().thenAccept(
+                    outcome -> this.listener.transferEnded(peerId, toOutcome(outcome), session.getFailure()));
+        }
+
+        @Override
+        public void failedToStart(final String remotePeerId, final Throwable cause) {
+            this.listener.transferStarted(remotePeerId);
+            this.listener.transferEnded(remotePeerId, PeerTransferOutcome.PROTOCOL_ERROR, cause);
+        }
+    }
+
+    /** Provides the prepared Relations export for the phone, see "Sequence" in PROTOCOL.md. */
+    public final class RelationsExportFiles implements ExportFiles {
+
+        private final PeerExport export;
+
+        public RelationsExportFiles(final PeerExport export) {
+            this.export = export;
+        }
+
+        @Override
+        public boolean offersIncremental() {
+            return this.export.getScope() == PeerExport.Scope.INCREMENTAL;
+        }
+
+        @Override
+        public List<ExportFile> forRequest(final boolean incremental) throws IOException {
+            return Arrays.asList(new ExportFile(this.export.getName(), this.export.getFile()));
+        }
+
+        @Override
+        public void imported(final List<String> names) {
+            // nothing to do: the prepared file is a temporary file the action deletes
+        }
     }
 
 }

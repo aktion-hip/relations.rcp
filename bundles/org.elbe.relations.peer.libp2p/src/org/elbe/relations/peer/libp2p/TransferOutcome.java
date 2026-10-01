@@ -27,7 +27,7 @@ package org.elbe.relations.peer.libp2p;
  * @author lbenno */
 public enum TransferOutcome {
 
-    /** The receiver acknowledged a complete, digest-verified delivery. */
+    /** The receiver acknowledged every file that was sent. */
     COMPLETED,
     /** The user declined the connecting device. */
     DECLINED_BY_USER,
@@ -40,7 +40,11 @@ public enum TransferOutcome {
     /** The stream ended before the transfer was acknowledged. */
     INTERRUPTED,
     /** The peer did not speak this protocol correctly. */
-    PROTOCOL_ERROR;
+    PROTOCOL_ERROR,
+    /** The receiver declared an unsupported protocol version; nothing was sent. */
+    VERSION_MISMATCH,
+    /** The receiver requested a scope other than the prepared one; nothing was sent. */
+    SCOPE_MISMATCH;
 
     /** @return boolean <code>true</code> only when delivery was acknowledged in full */
     public boolean isComplete() {

@@ -36,4 +36,15 @@ public interface IPeerTransferListener {
      *            permits clearing the change log */
     void transferEnded(String peerId, PeerTransferOutcome outcome);
 
+    /** A transfer has ended, together with the error that ended it, if any.
+     *
+     * @param peerId String the authenticated identity of the device
+     * @param outcome {@link PeerTransferOutcome} only {@link PeerTransferOutcome#COMPLETED}
+     *            permits clearing the change log
+     * @param cause {@link Throwable} the underlying error, for the log, or <code>null</code>
+     * @since 2.2 */
+    default void transferEnded(final String peerId, final PeerTransferOutcome outcome, final Throwable cause) {
+        transferEnded(peerId, outcome);
+    }
+
 }

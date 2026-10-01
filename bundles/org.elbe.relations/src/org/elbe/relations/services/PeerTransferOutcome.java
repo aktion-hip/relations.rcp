@@ -23,7 +23,7 @@ package org.elbe.relations.services;
  * @author lbenno */
 public enum PeerTransferOutcome {
 
-    /** The receiver acknowledged a complete, digest-verified delivery. */
+    /** The receiver acknowledged every file that was sent. */
     COMPLETED,
     /** The user declined the connecting device; nothing was sent. */
     DECLINED_BY_USER,
@@ -36,7 +36,16 @@ public enum PeerTransferOutcome {
     /** The connection ended before the transfer was acknowledged. */
     INTERRUPTED,
     /** The peer did not speak the transfer protocol correctly. */
-    PROTOCOL_ERROR;
+    PROTOCOL_ERROR,
+    /** The receiver declared a protocol version this application does not support; nothing
+     * was sent.
+     *
+     * @since 2.2 */
+    VERSION_MISMATCH,
+    /** The receiver requested a scope other than the one the user prepared; nothing was sent.
+     *
+     * @since 2.2 */
+    SCOPE_MISMATCH;
 
     /** @return boolean <code>true</code> only when delivery was acknowledged in full */
     public boolean isComplete() {

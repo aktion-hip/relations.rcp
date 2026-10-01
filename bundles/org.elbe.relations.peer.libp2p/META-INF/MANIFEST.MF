@@ -18,9 +18,9 @@ Import-Package: javax.crypto,
  javax.security.auth.x500,
  javax.security.cert,
  javax.xml.parsers,
+ org.elbe.relations.services;version="[2.2.0,3.0.0)",
  org.osgi.framework,
  org.osgi.service.component.annotations;version="[1.3.0,2.0.0)",
- org.elbe.relations.services;version="[2.1.0,3.0.0)",
  org.w3c.dom,
  org.xml.sax
 Service-Component: OSGI-INF/org.elbe.relations.peer.libp2p.Libp2pPeerTransferProvider.xml
@@ -57,4 +57,6 @@ Bundle-ClassPath: .,
  libs/noise-java-22.1.0.jar,
  libs/protobuf-java-3.25.5.jar,
  libs/protobuf-javanano-3.0.0-alpha-5.jar,
- libs/slf4j-api-2.0.9.jar
+ libs/slf4j-api-2.0.9.jar,
+ libs/jakarta.json-api-2.1.3.jar,
+ libs/parsson-1.1.6.jar

@@ -37,4 +37,23 @@ public interface IPeerConnectionApproval {
      * @return {@link CompletableFuture}&lt;Boolean> <code>true</code> to send the export */
     CompletableFuture<Boolean> approve(String peerId);
 
+    /** Asks for approval, showing the confirmation code the connecting device displays as
+     * well, so that the user can check they are approving the device in their hand.
+     *
+     * <p>
+     * The provider may cancel the returned future when the connection ends before the user
+     * has decided; an implementation should then withdraw its prompt. A decision made after
+     * cancellation is ignored.
+     * </p>
+     *
+     * @param peerId String the cryptographically established identity of the connecting
+     *            device
+     * @param confirmationCode String the six-digit code derived from the identities of both
+     *            devices
+     * @return {@link CompletableFuture}&lt;Boolean> <code>true</code> to send the export
+     * @since 2.2 */
+    default CompletableFuture<Boolean> approve(final String peerId, final String confirmationCode) {
+        return approve(peerId);
+    }
+
 }

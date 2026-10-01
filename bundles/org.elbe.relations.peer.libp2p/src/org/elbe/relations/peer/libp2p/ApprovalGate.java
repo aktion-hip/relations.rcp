@@ -34,6 +34,8 @@ public interface ApprovalGate {
 
     /** @param peerId String the cryptographically established identity of the connecting
      *            device
-     * @return {@link CompletableFuture}&lt;Boolean> <code>true</code> to send the export */
-    CompletableFuture<Boolean> approve(String peerId);
+     * @param confirmationCode String the six-digit code the connecting device displays too
+     * @return {@link CompletableFuture}&lt;Boolean> <code>true</code> to send the export; the
+     *         caller cancels it when the connection ends before the user has decided */
+    CompletableFuture<Boolean> approve(String peerId, String confirmationCode);
 }

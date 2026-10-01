@@ -28,8 +28,9 @@ import org.elbe.relations.RelationsMessages;
 import org.elbe.relations.services.IPeerConnectionApproval;
 
 /** Asks the user, for every connecting device, whether it may receive the export. The
- * device's identity is the one established by the encrypted handshake. Declining is the
- * default, and a connection arriving after the session window has closed is declined.
+ * device's identity and the confirmation code are the ones established by the encrypted
+ * handshake. Declining is the default, a connection arriving after the session window has
+ * closed is declined, and the prompt is withdrawn when the device disconnects first.
  *
  * @author lbenno */
 public class PeerApprovalPrompt implements IPeerConnectionApproval {
@@ -50,12 +51,28 @@ public class PeerApprovalPrompt implements IPeerConnectionApproval {
 
     @Override
     public CompletableFuture<Boolean> approve(final String peerId) {
+        return ask(String.format(RelationsMessages.getString("PeerApprovalPrompt.dlg.msg"), peerId)); //$NON-NLS-1$
+    }
+
+    @Override
+    public CompletableFuture<Boolean> approve(final String peerId, final String confirmationCode) {
+        return ask(String.format(RelationsMessages.getString("PeerApprovalPrompt.dlg.msg.code"), //$NON-NLS-1$
+                confirmationCode, peerId));
+    }
+
+    /** Opens the prompt. When the provider cancels the returned future because the connection
+     * has ended, the prompt is closed and the user's answer, if any, is ignored. */
+    private CompletableFuture<Boolean> ask(final String message) {
         final CompletableFuture<Boolean> answer = new CompletableFuture<>();
         if (this.display.isDisposed()) {
             answer.complete(false);
             return answer;
         }
         this.display.asyncExec(() -> {
+            if (answer.isDone()) {
+                // withdrawn before it was shown
+                return;
+            }
             final Shell shell = this.parent.get();
             if (shell == null || shell.isDisposed()) {
                 answer.complete(false);
@@ -63,11 +80,20 @@ public class PeerApprovalPrompt implements IPeerConnectionApproval {
             }
             final MessageDialog dialog = new MessageDialog(shell,
                     RelationsMessages.getString("PeerApprovalPrompt.dlg.title"), //$NON-NLS-1$
-                    null,
-                    String.format(RelationsMessages.getString("PeerApprovalPrompt.dlg.msg"), peerId), //$NON-NLS-1$
-                    MessageDialog.QUESTION, 1,
+                    null, message, MessageDialog.QUESTION, 1,
                     RelationsMessages.getString("PeerApprovalPrompt.btn.send"), //$NON-NLS-1$
                     RelationsMessages.getString("PeerApprovalPrompt.btn.decline")); //$NON-NLS-1$
+            answer.whenComplete((approved, exc) -> {
+                if (!this.display.isDisposed()) {
+                    this.display.asyncExec(() -> {
+                        final Shell open = dialog.getShell();
+                        if (open != null && !open.isDisposed()) {
+                            dialog.close();
+                        }
+                    });
+                }
+            });
+            // has no effect once the future was cancelled
             answer.complete(dialog.open() == SEND);
         });
         return answer;

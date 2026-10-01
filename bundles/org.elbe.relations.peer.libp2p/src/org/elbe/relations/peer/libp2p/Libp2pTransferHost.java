@@ -35,10 +35,9 @@ import java.util.concurrent.TimeoutException;
 import io.libp2p.core.Host;
 import io.libp2p.core.crypto.PrivKey;
 import io.libp2p.core.dsl.HostBuilder;
-import io.libp2p.core.multiformats.Multiaddr;
 import io.libp2p.core.multistream.ProtocolBinding;
-import io.libp2p.discovery.MDnsDiscovery;
 import io.libp2p.core.mux.StreamMuxerProtocol;
+import io.libp2p.discovery.MDnsDiscovery;
 import io.libp2p.security.noise.NoiseXXSecureChannel;
 import io.libp2p.transport.tcp.TcpTransport;
 
@@ -66,7 +65,7 @@ public class Libp2pTransferHost {
      * library's own <code>MDnsDiscovery.ServiceTag</code> constant, which is unusable with
      * its own constructor. Only the <code>ServiceTagLocal</code> form works.
      * </p> */
-    public static final String SERVICE_TAG = "_relations-export._udp.local."; //$NON-NLS-1$
+    public static final String SERVICE_TAG = "_relations-sync._udp.local."; //$NON-NLS-1$
 
     private static final int QUERY_INTERVAL_SECONDS = 120;
 
@@ -205,10 +204,6 @@ public class Libp2pTransferHost {
         return found;
     }
 
-
-
-
-
     private void startDiscovery() {
         try {
             this.discovery.start().get(OPERATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -228,12 +223,6 @@ public class Libp2pTransferHost {
      * @throws IllegalStateException if the host is not running */
     public synchronized String getPeerId() {
         return requireRunning().getPeerId().toBase58();
-    }
-
-    /** @return List&lt;String> the addresses this host can be reached at, each including the
-     *         peer identity */
-    public synchronized List<String> getListenAddresses() {
-        return requireRunning().listenAddresses().stream().map(Multiaddr::toString).toList();
     }
 
     /** Stops the host and releases the port. Calling this on a host that is not running has

@@ -186,7 +186,8 @@ public class ExportToPeerAction implements ICommand {
                 RelationsConstants.DFT_PEER_PORT);
         final Display display = shell.getDisplay();
         final AtomicReference<PeerSessionDialog> sessionDialog = new AtomicReference<>();
-        final SessionListener listener = new SessionListener(display, sessionDialog);
+        final SessionListener listener = new SessionListener(display, sessionDialog,
+                export.getScope() == PeerExport.Scope.INCREMENTAL);
         final PeerApprovalPrompt approval = new PeerApprovalPrompt(display, () -> {
             final PeerSessionDialog dialog = sessionDialog.get();
             return dialog != null && dialog.isOpen() ? dialog.getShell() : null;
@@ -224,12 +225,16 @@ public class ExportToPeerAction implements ICommand {
     private class SessionListener implements IPeerTransferListener {
         private final Display display;
         private final AtomicReference<PeerSessionDialog> sessionDialog;
+        private final boolean incremental;
         private volatile boolean connected;
         private volatile boolean completed;
 
-        SessionListener(final Display display, final AtomicReference<PeerSessionDialog> sessionDialog) {
+        /** @param incremental boolean the scope the user prepared, named when a device asks for the other one */
+        SessionListener(final Display display, final AtomicReference<PeerSessionDialog> sessionDialog,
+                final boolean incremental) {
             this.display = display;
             this.sessionDialog = sessionDialog;
+            this.incremental = incremental;
         }
 
         @Override
@@ -240,13 +245,22 @@ public class ExportToPeerAction implements ICommand {
 
         @Override
         public void transferEnded(final String peerId, final PeerTransferOutcome outcome) {
+            transferEnded(peerId, outcome, null);
+        }
+
+        @Override
+        public void transferEnded(final String peerId, final PeerTransferOutcome outcome, final Throwable cause) {
             if (outcome.isComplete()) {
                 clearChangeLog();
                 this.completed = true;
                 ExportToPeerAction.this.log.info(String.format("Export delivered to peer %s.", peerId)); //$NON-NLS-1$
             } else if (outcome != PeerTransferOutcome.DECLINED_BY_USER) {
-                ExportToPeerAction.this.log.error(String.format("Transfer to peer %s failed: %s", //$NON-NLS-1$
-                        peerId, outcome));
+                final String message = String.format("Transfer to peer %s failed: %s", peerId, outcome); //$NON-NLS-1$
+                if (cause == null) {
+                    ExportToPeerAction.this.log.error(message);
+                } else {
+                    ExportToPeerAction.this.log.error(cause, message);
+                }
             }
             showStatus(statusOf(peerId, outcome));
         }
@@ -270,6 +284,11 @@ public class ExportToPeerAction implements ICommand {
                 case STORAGE_ERROR -> failed(peerId, "ExportToPeerAction.reason.storage"); //$NON-NLS-1$
                 case REJECTED_BY_RECEIVER -> failed(peerId, "ExportToPeerAction.reason.rejected"); //$NON-NLS-1$
                 case PROTOCOL_ERROR -> failed(peerId, "ExportToPeerAction.reason.protocol"); //$NON-NLS-1$
+                case VERSION_MISMATCH -> String.format(RelationsMessages.getString("ExportToPeerAction.status.version"), peerId); //$NON-NLS-1$
+                case SCOPE_MISMATCH -> String.format(RelationsMessages.getString("ExportToPeerAction.status.scope"), //$NON-NLS-1$
+                        peerId, RelationsMessages.getString(this.incremental
+                                ? "ExportToPeerAction.scope.incremental" //$NON-NLS-1$
+                                        : "ExportToPeerAction.scope.full")); //$NON-NLS-1$
             };
         }
 
