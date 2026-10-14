@@ -748,11 +748,4 @@
             sequence="M1+M">
       </key>
    </extension>
-   <extension
-         id="org.elbe.relations.startup"
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.elbe.relations.utility.IntroDisplayStartup">
-      </startup>
-   </extension>
 </plugin>

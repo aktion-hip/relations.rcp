@@ -228,7 +228,6 @@
   <handlers xmi:id="_5HqxcDm1EeinGNvAVK3xcg" elementId="org.elbe.relations.handler.cloud.export" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.CloudExportHandler" command="_Asr3gDm1EeinGNvAVK3xcg"/>
   <handlers xmi:id="_8wF1UD0FEeiIr6m_H0bkTw" elementId="org.elbe.relations.handler.cloud.help" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.CloudConfigurationHelper" command="_iPAjUD0FEeiIr6m_H0bkTw"/>
   <handlers xmi:id="_N62-ANHjEfCXd_dERf2xNA" elementId="org.eclipse.ui.help.helpContents" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.HelpContentHandler" command="_7hxZQM4xEfCrsp01wQTeHA"/>
-  <handlers xmi:id="_O8VwIDDNEfGl_dCuvLkdnQ" elementId="org.elbe.relations.handler.intro" command="_4iC8EDDGEfGl_dCuvLkdnQ"/>
   <handlers xmi:id="_-A9msLgcEfG8486asxO_rQ" elementId="org.elbe.relations.handler.p2p.export" contributionURI="bundleclass://org.elbe.relations/org.elbe.relations.handlers.PeerToPeerUpload" command="_HyiD4LgcEfG8486asxO_rQ"/>
   <bindingTables xmi:id="_gRRkADyfEeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.app" bindingContext="_vLHKgDv5EeKA7_T_MYQC0Q"/>
   <bindingTables xmi:id="_8u67EDx4EeKc_uS-EtsnSg" elementId="org.elbe.relations.bindingtable.main" bindingContext="_2rKewDv9EeKA7_T_MYQC0Q">
