@@ -323,4 +323,8 @@ POSSIBILITY OF SUCH DAMAGES.
          id="org.elbe.relations.peer.libp2p"
          version="0.0.0"/>
 
+   <plugin
+         id="org.elbe.relations.help"
+         version="0.0.0"/>
+
 </feature>

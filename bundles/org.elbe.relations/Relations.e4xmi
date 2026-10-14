@@ -116,9 +116,9 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_HcGmkEQREeOCmPg46S8bTQ" elementId="" label="%command.quit" command="_-axcChYwEeKaY4i-iZlKSg"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-G3PwB67EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility" label="%menu.label.utility">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_L_o9cB68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.reindex" label="%handledmenuitem.label.15" command="_h9_rIB68EeK3tP7nd1gQtA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZAGNgDm0EeinGNvAVK3xcg" elementId="org.elbe.relations.menu.utility.cloud.export" label="%handledmenuitem.label.cloud" command="_Asr3gDm1EeinGNvAVK3xcg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_q_XP8LgaEfG8486asxO_rQ" elementId="org.elbe.relations.menu.utility.p2p" label="%handledmenuitem.label.p2p" command="_HyiD4LgcEfG8486asxO_rQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZAGNgDm0EeinGNvAVK3xcg" elementId="org.elbe.relations.menu.utility.cloud.export" label="%handledmenuitem.label.cloud" command="_Asr3gDm1EeinGNvAVK3xcg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_L_o9cB68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.reindex" label="%handledmenuitem.label.15" command="_h9_rIB68EeK3tP7nd1gQtA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_P9JU0B68EeK3tP7nd1gQtA" elementId="org.elbe.relations.menu.utility.preferences" label="%handledmenuitem.label.16" command="_-6q8MB7EEeK3tP7nd1gQtA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-axcHRYwEeKaY4i-iZlKSg" elementId="help" label="%menu.label.help">
