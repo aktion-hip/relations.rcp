@@ -65,6 +65,7 @@ import org.elbe.relations.internal.preferences.LanguageService;
 import org.elbe.relations.internal.services.IDBController;
 import org.elbe.relations.internal.utility.ActionHelper;
 import org.elbe.relations.internal.utility.EmbeddedCatalogHelper;
+import org.elbe.relations.internal.utility.SplashProgress;
 import org.elbe.relations.services.IBrowserManager;
 import org.elbe.relations.services.IDBConnectionConfig;
 import org.hip.kernel.dbaccess.DBAccessConfiguration;
@@ -86,6 +87,7 @@ import jakarta.inject.Inject;
 public class RelationsLifeCycle {
 
     private RelationsBrowserManager browserManager;
+    private SplashProgress splashProgress;
 
     @Inject
     private Logger log;
@@ -105,6 +107,10 @@ public class RelationsLifeCycle {
 
     @PostContextCreate
     void initializeApp(final IEclipseContext context, final IEventBroker eventBroker) {
+        // display the startup progress on the splash screen
+        this.splashProgress = SplashProgress.create(Display.getCurrent(), this.log);
+        context.set(SplashProgress.class, this.splashProgress);
+        this.splashProgress.step(SplashProgress.STEP_PREPARE);
 
         // set db settings and controller to workspace context
         if (this.dbSettings != null && context.get(DBSettings.class) == null) {
@@ -134,6 +140,7 @@ public class RelationsLifeCycle {
         // register a special event handler
         eventBroker.subscribe(ShowTextItemForm.TOPIC, new ShowTextItemForm());
 
+        this.splashProgress.step(SplashProgress.STEP_DATABASE);
         boolean isDBConfigured = false;
         if (this.dbSettings != null && this.dbSettings.getDBConnectionConfig() != null
                 && this.dbSettings.getDBConnectionConfig().isEmbedded()
@@ -148,11 +155,11 @@ public class RelationsLifeCycle {
                         .make(DbEmbeddedCreateHandler.class, context);
                 dbCreate.execute(this.dbSettings, context);
             } else {
-                MessageDialog.openError(new Shell(Display.getDefault()),
+                this.splashProgress.runHidden(() -> MessageDialog.openError(new Shell(Display.getDefault()),
                         RelationsMessages.getString(
                                 "relations.life.cycle.db.open.error.title"), //$NON-NLS-1$
                         RelationsMessages.getString(
-                                "relations.life.cycle.db.open.error.msg")); //$NON-NLS-1$
+                                "relations.life.cycle.db.open.error.msg"))); //$NON-NLS-1$
             }
         }
         if (!isDBConfigured) {
@@ -170,8 +177,10 @@ public class RelationsLifeCycle {
             }
         }
 
+        this.splashProgress.step(SplashProgress.STEP_DATA);
         dataService.loadData(RelationsConstants.TOPIC_DB_CHANGED_RELOAD);
 
+        this.splashProgress.step(SplashProgress.STEP_INDEX);
         EmbeddedCatalogHelper.reindexChecked(this.dbSettings, context);
     }
 
@@ -186,6 +195,7 @@ public class RelationsLifeCycle {
 
     @ProcessAdditions
     void doRestore(final MApplication application, final EModelService modelService) {
+        this.splashProgress.step(SplashProgress.STEP_BROWSERS);
         this.browserManager.restoreState(this.preferences);
         checkBindings(application);
     }
@@ -210,6 +220,7 @@ public class RelationsLifeCycle {
     @ProcessRemovals
     void preRendering(final IProvisioningAgent agent) {
         addRepository(agent);
+        this.splashProgress.step(SplashProgress.STEP_UI);
     }
 
     private void addRepository(final IProvisioningAgent agent) {
@@ -256,6 +267,10 @@ public class RelationsLifeCycle {
     @Inject
     @org.eclipse.e4.core.di.annotations.Optional
     void subscribeTest(@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) final Event event) {
+        // safety net: normally, the splash progress has been removed together with the splash screen
+        if (this.splashProgress != null) {
+            this.splashProgress.dispose();
+        }
         final String browserId = this.preferences.get(RelationsConstants.ACTIVE_BROWSER_ID, "");
         if (!browserId.isEmpty()) {
             final MPart browser = this.partService.findPart(browserId);

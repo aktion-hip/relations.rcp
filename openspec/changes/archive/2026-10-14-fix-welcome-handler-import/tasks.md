@@ -14,7 +14,7 @@
 
 The build does not assemble the e4 model, so these steps can only be checked by launching the product (Windows).
 
-- [ ] 3.1 Start with a fresh workspace (`-data <new dir>`). Verify that the application starts without the `ClassCastException` (check the console and `<workspace>/.metadata/.log`) and that the welcome page appears.
-- [ ] 3.2 In the same workspace, choose Help > Welcome after closing the page. Verify that the page opens. Then restart and verify that the menu still works with the now persisted model.
-- [ ] 3.3 Start with a workspace persisted by the previous release, which still contains the classless `org.elbe.relations.handler.intro`. Verify that startup succeeds and that Help > Welcome opens the page (design D1 risk).
-- [ ] 3.4 Once 3.1–3.3 pass, continue with the manual checks of `add-welcome-page` (its section 6), and record in that change's `tasks.md` that its task 5.1 handler was replaced by this fix.
+- [x] 3.1 Start with a fresh workspace (`-data <new dir>`). Verify that the application starts without the `ClassCastException` (check the console and `<workspace>/.metadata/.log`) and that the welcome page appears.
+- [x] 3.2 In the same workspace, choose Help > Welcome after closing the page. Verify that the page opens. Then restart and verify that the menu still works with the now persisted model.
+- [x] 3.3 Start with a workspace persisted by the previous release, which still contains the classless `org.elbe.relations.handler.intro`. Verify that startup succeeds and that Help > Welcome opens the page (design D1 risk).
+- [x] 3.4 Once 3.1–3.3 pass, continue with the manual checks of `add-welcome-page` (its section 6), and record in that change's `tasks.md` that its task 5.1 handler was replaced by this fix.
