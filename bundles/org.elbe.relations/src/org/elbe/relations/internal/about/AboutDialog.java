@@ -207,7 +207,7 @@ public class AboutDialog extends TrayDialog {
 		topContainer.setForeground(foreground);
 
 		layout = new GridLayout();
-		layout.numColumns = (aboutImage == null || item == null ? 1 : 2);
+		layout.numColumns = aboutImage == null || item == null ? 1 : 2;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
@@ -282,11 +282,6 @@ public class AboutDialog extends TrayDialog {
 			this.text.setBackground(background);
 			this.text.setForeground(foreground);
 
-			// aboutTextManager = new AboutTextManager(text);
-			// aboutTextManager.setItem(item);
-
-			createTextMenu();
-
 			final GridData gd = new GridData();
 			gd.verticalAlignment = GridData.BEGINNING;
 			gd.horizontalAlignment = GridData.FILL;
@@ -356,32 +351,6 @@ public class AboutDialog extends TrayDialog {
 		bar.setLayoutData(data);
 
 		return workArea;
-	}
-
-	/**
-	 * Create the context menu for the text widget.
-	 *
-	 * @since 3.4
-	 */
-	private void createTextMenu() {
-		// final MenuManager textManager = new MenuManager();
-		// textManager.add(new CommandContributionItem(
-		// new CommandContributionItemParameter(PlatformUI.getWorkbench(),
-		// null, IWorkbenchCommandConstants.EDIT_COPY,
-		// CommandContributionItem.STYLE_PUSH)));
-		// textManager.add(new CommandContributionItem(
-		// new CommandContributionItemParameter(PlatformUI.getWorkbench(),
-		// null, IWorkbenchCommandConstants.EDIT_SELECT_ALL,
-		// CommandContributionItem.STYLE_PUSH)));
-		// text.setMenu(textManager.createContextMenu(text));
-		// text.addDisposeListener(new DisposeListener() {
-		//
-		// @Override
-		// public void widgetDisposed(DisposeEvent e) {
-		// textManager.dispose();
-		// }
-		// });
-
 	}
 
 	private void createFeatureImageButtonRow(final Composite parent) {

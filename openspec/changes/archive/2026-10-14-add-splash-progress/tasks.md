@@ -22,9 +22,9 @@
 
 The build does not exercise startup, so these are checked by hand in the exported product on Windows (Linux/macOS if available).
 
-- [ ] 5.1 Normal start with an existing workspace. Verify that the bar and message appear in the bottom strip of the splash image, that the messages run through the six phases in order, that the bar only moves forward, and that nothing remains after the main window opens.
-- [ ] 5.2 First start on a fresh workspace (creates the embedded DB). Verify that the progress shows and startup completes.
-- [ ] 5.3 Force a re-index (create the reindex marker in the catalog) and start. Verify that "Checking search index…" stays visible while indexing runs.
-- [ ] 5.4 Start with `-nl de`. Verify that all messages are in German.
-- [ ] 5.5 Start with `-nosplash`. Verify a normal start with no errors in `<workspace>/.metadata/.log`.
-- [ ] 5.6 Provoke the database error dialog (embedded config missing). Verify that the dialog is visible above or without the splash, can be confirmed, and that startup continues.
+- [x] 5.1 Normal start with an existing workspace. Verify that the bar and message appear in the bottom strip of the splash image, that the messages run through the six phases in order, that the bar only moves forward, and that nothing remains after the main window opens.
+- [x] 5.2 First start on a fresh workspace (creates the embedded DB). Verify that the progress shows and startup completes.
+- [x] 5.3 Force a re-index (create the reindex marker in the catalog) and start. Verify that "Checking search index…" stays visible while indexing runs.
+- [x] 5.4 Start with `-nl de`. Verify that all messages are in German.
+- [x] 5.5 Start with `-nosplash`. Verify a normal start with no errors in `<workspace>/.metadata/.log`.
+- [x] 5.6 Provoke the database error dialog (embedded config missing). Verify that the dialog is visible above or without the splash, can be confirmed, and that startup continues.
