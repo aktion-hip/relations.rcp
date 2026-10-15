@@ -18,8 +18,6 @@
  ***************************************************************************/
 package org.elbe.relations.defaultbrowser;
 
-import org.eclipse.swt.graphics.Point;
-
 /**
  * This plugin's constants.
  * 
@@ -32,7 +30,5 @@ public final class Constants {
 
 	public static final String BROWSER_ID = "org.elbe.relations.browser.default"; //$NON-NLS-1$	
 	public static final String BROWSER_POPUP = "org.elbe.relations.defaultbrowser.popup"; //$NON-NLS-1$	
-
-	public static final Point DEFAULT_SIZE = new Point(655, 540);
 
 }

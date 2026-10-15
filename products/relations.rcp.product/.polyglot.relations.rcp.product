@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.elbe.relations</groupId>
     <artifactId>products</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.0</version>
     <relativePath>../.polyglot.pom.tycho</relativePath>
   </parent>
   <artifactId>relations.rcp.product</artifactId>
