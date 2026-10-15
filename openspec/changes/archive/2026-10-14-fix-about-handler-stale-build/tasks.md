@@ -7,9 +7,9 @@
 ## 2. Remove the stale stubs
 
 - [x] 2.1 Delete the two stub class files from `bundles/org.elbe.relations/bin/` (the paths from 1.1). Verify that `tools/check-ide-output.py` now exits 0.
-- [ ] 2.2 (Maintainer, in Eclipse) Open `target-platform/target-platform.target` and choose *Reload Target Platform*. Check that the Problems view shows no errors for `org.elbe.relations` (in particular none in `MANIFEST.MF`), then run **Project > Clean…** on `org.elbe.relations`. Verify that `tools/check-ide-output.py` still exits 0 after the IDE rebuild and that `bin/org/elbe/relations/handlers/AboutHandler.class` exists again with a new timestamp.
+- [x] 2.2 (Maintainer, in Eclipse) Open `target-platform/target-platform.target` and choose *Reload Target Platform*. Check that the Problems view shows no errors for `org.elbe.relations` (in particular none in `MANIFEST.MF`), then run **Project > Clean…** on `org.elbe.relations`. Verify that `tools/check-ide-output.py` still exits 0 after the IDE rebuild and that `bin/org/elbe/relations/handlers/AboutHandler.class` exists again with a new timestamp.
 
 ## 3. Verification
 
-- [ ] 3.1 (Maintainer) Launch Relations from the IDE. Verify that the log no longer contains `Unable to create class 'org.elbe.relations.handlers.AboutHandler'` and that Help > About opens the About dialog.
+- [x] 3.1 (Maintainer) Launch Relations from the IDE. Verify that the log no longer contains `Unable to create class 'org.elbe.relations.handlers.AboutHandler'` and that Help > About opens the About dialog.
 - [x] 3.2 Run `mvn -B -o clean verify` and verify BUILD SUCCESS (the new `tools/` folder does not affect the reactor). Then restore the `pom.tycho` files the build deletes (`git checkout -- bundles/pom.tycho features/pom.tycho products/pom.tycho`).
