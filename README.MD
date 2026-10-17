@@ -8,6 +8,10 @@ Source code for the Relations Application, based on Eclipse e4 RCP.
 - cd `relations.rcp`
 - `mvn clean verify`
 
+This will create the product (for Windows, Max and Linux) in `/relations.rcp/products/relations.rcp.product/target/products`.
+
+---
+
 Project page: [https://sourceforge.net/projects/relations-rcp/](https://sourceforge.net/projects/relations-rcp/)
 
 Project documentation: [https://relations-rcp.sourceforge.io/](https://relations-rcp.sourceforge.io/)
