@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic_1="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_welcomeFragments">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_welcomeDescriptorFragment" featurename="descriptors" parentElementId="org.elbe.relations.application">
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_welcomePartDescriptor" elementId="org.elbe.relations.intro.part.welcome" label="%part.welcome.label" iconURI="platform:/plugin/org.elbe.relations.intro/icons/welcome.gif" tooltip="%part.welcome.tooltip" closeable="true" contributionURI="bundleclass://org.elbe.relations.intro/org.elbe.relations.intro.WelcomePart">
+      <tags>View</tags>
+      <tags>removeOnHide</tags>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_welcomeAddonFragment" featurename="addons" parentElementId="org.elbe.relations.application">
+    <elements xsi:type="application:Addon" xmi:id="_welcomeAddon" elementId="org.elbe.relations.intro.addon.welcome" contributionURI="bundleclass://org.elbe.relations.intro/org.elbe.relations.intro.WelcomeAddon"/>
+  </fragments>
+</fragment:ModelFragments>

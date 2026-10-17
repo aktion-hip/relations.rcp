@@ -59,6 +59,26 @@ public class ItemPositionCalculator {
 	}
 
 	/**
+	 * Returns the location (i.e. top left corner) of the center item that
+	 * places the item's center in the center of the visible area.
+	 *
+	 * @param inItemWidth
+	 *            long Width of item
+	 * @param inItemHeight
+	 *            long Height of item
+	 * @param inAreaWidth
+	 *            double Width of the visible area
+	 * @param inAreaHeight
+	 *            double Height of the visible area
+	 * @return PrecisionPoint the translation to apply to all item positions
+	 */
+	public static PrecisionPoint getCenterTranslation(final long inItemWidth, final long inItemHeight,
+			final double inAreaWidth, final double inAreaHeight) {
+		return new PrecisionPoint(Math.round((inAreaWidth - inItemWidth) / 2.0),
+				Math.round((inAreaHeight - inItemHeight) / 2.0));
+	}
+
+	/**
 	 * Recalculates with new values for the remaining items.
 	 *
 	 * @param inRadius

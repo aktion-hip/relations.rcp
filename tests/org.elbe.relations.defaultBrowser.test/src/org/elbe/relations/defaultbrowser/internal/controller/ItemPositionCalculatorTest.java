@@ -74,4 +74,37 @@ public class ItemPositionCalculatorTest {
         }
     }
 
+    @Test
+    public void testCenterTranslation() {
+        final int[][] lAreas = new int[][] { { 655, 540 }, { 656, 541 }, { 800, 600 }, { 121, 31 }, { 0, 0 } };
+        final int[][] lItems = new int[][] { { WIDTH, HEIGHT }, { 121, 31 } };
+        for (final int[] lItem : lItems) {
+            for (final int[] lArea : lAreas) {
+                final PrecisionPoint lTranslate = ItemPositionCalculator.getCenterTranslation(lItem[0], lItem[1],
+                        lArea[0], lArea[1]);
+                assertEquals(lArea[0] / 2.0, lTranslate.x + lItem[0] / 2.0, 1);
+                assertEquals(lArea[1] / 2.0, lTranslate.y + lItem[1] / 2.0, 1);
+            }
+        }
+
+        final PrecisionPoint lTranslate = ItemPositionCalculator.getCenterTranslation(WIDTH, HEIGHT, 800, 600);
+        assertEquals(340, lTranslate.x);
+        assertEquals(285, lTranslate.y);
+    }
+
+    @Test
+    public void testSymmetry() {
+        for (final int lRemaining : new int[] { 2, 4, 6, 25 }) {
+            final ItemPositionCalculator lCalculator = new ItemPositionCalculator(WIDTH, HEIGHT, RADIUS, lRemaining);
+            double lSumX = 0;
+            double lSumY = 0;
+            for (final PrecisionPoint lPoint : lCalculator.getPositions()) {
+                lSumX += lPoint.preciseX();
+                lSumY += lPoint.preciseY();
+            }
+            assertEquals(0, lSumX, 0.001, "x not symmetric for " + lRemaining);
+            assertEquals(0, lSumY, 0.001, "y not symmetric for " + lRemaining);
+        }
+    }
+
 }

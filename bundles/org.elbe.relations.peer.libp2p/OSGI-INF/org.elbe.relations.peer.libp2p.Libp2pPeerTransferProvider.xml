@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" name="org.elbe.relations.peer.libp2p.Libp2pPeerTransferProvider">
+   <service>
+      <provide interface="org.elbe.relations.services.IPeerTransferProvider"/>
+   </service>
+   <implementation class="org.elbe.relations.peer.libp2p.Libp2pPeerTransferProvider"/>
+</scr:component>

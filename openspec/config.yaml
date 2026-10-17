@@ -1,0 +1,139 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+context: |
+  Relations -- a desktop knowledge-management application (Eclipse e4 RCP, SWT,
+  Java 21). Users create Term, Text and Person items and link them into a
+  navigable graph. Single maintainer. The code dates from 2001 onward, but the
+  git repo was seeded 2025-12-06 as a squashed import, so `git log` and
+  `git blame` explain almost nothing. Do not rely on history for rationale.
+
+  ## Build
+  Maven + Tycho 5.0.4, POMLESS (`.mvn/extensions.xml` loads `tycho-build`).
+  Only two pom.xml files exist: `./pom.xml` and `./target-platform/pom.xml`.
+  Every bundle/feature/product pom is generated from MANIFEST.MF, feature.xml and
+  the .product file -- never look for or create `bundles/pom.xml`.
+  Reactor modules are `bundles`, `features`, `products` only.
+  The target platform (`target-platform/target-platform.target`) pins 10 p2 repos
+  spanning several Eclipse release trains plus one Maven location. Several are
+  staging or "latest" URLs, so resolution is network-dependent and fragile.
+  Treat any target-platform edit as high risk and verify a cold resolve.
+
+  ## Testing and CI
+  `tests/` holds 6 OSGi test fragments (~72 JUnit 5 + Mockito classes) but is NOT
+  a reactor module and has no pom. `mvn clean verify` runs ZERO tests, and
+  `.github/` contains no workflows. Never describe a change as verified on the
+  strength of the build alone -- state how it was actually checked.
+
+  ## Architecture (three layers, bottom-up)
+  1. `org.hip.viffw` (~39k lines) -- a home-grown ORM ("VIF framework"), not a
+     third-party library. DomainObject / DomainObjectHome / QueryStatement.
+     Object-relational mapping is an XML <objectDef> returned by each Home's
+     getObjectDefString(), inlined as XML_OBJECT_DEF string constants inside the
+     Home classes; there are no separate mapping files. SQL dialects are selected
+     by DBAdapterSelector.
+  2. `org.elbe.relations.data` (~7k lines) -- domain model and SPI.
+     Items are Term, Text and Person (all extend AbstractItem); Relation is the
+     edge; EventStore is an append-only CREATE/UPDATE/DELETE log.
+     Identity is `UniqueID` = itemType + itemID (RELATION=0, TERM=1, TEXT=2,
+     PERSON=3). The same pair keys the Lucene index and the event store. This is
+     the central abstraction of the system -- preserve it.
+  3. `org.elbe.relations` (~47k lines) -- the e4 application and the SPI host.
+
+  ## Extensibility -- the most important convention
+  The application defines NO custom extension points (no .exsd files anywhere).
+  Everything plugs in two ways, and new capabilities should follow the same path:
+    * OSGi Declarative Services. Interfaces are exported from
+      `org.elbe.relations.services` (IBrowserController, IRelationsBrowser,
+      IPrintService, IBibliographyProvider, IExtractorAdapter,
+      IDBConnectionConfig, ICloudProvider; plus IIndexer in .data). Whiteboard
+      registries in `org.elbe.relations/OSGI-INF/*.xml` bind them 1..n dynamic.
+    * e4 model fragments. The PartStack `relations.views` is deliberately EMPTY
+      in `Relations.e4xmi`; browser bundles contribute parts through their own
+      `RelationsBrowser.e4xmi`.
+  So a new browser is one DS component plus one model fragment, and the host
+  bundle is not touched. Prefer this over editing `Relations.e4xmi`.
+
+  ## e4 specifics
+  The application model is `Relations.e4xmi` (NOT Application.e4xmi), bound via
+  plugin.xml's org.eclipse.core.runtime.products together with the lifecycle
+  class and the CSS theme. Legacy 3.x extension points
+  (org.eclipse.ui.commands/.bindings/.contexts and the New/Import/Export wizards)
+  coexist with the e4 model; startup runs a DuplicateFixer to strip duplicate key
+  sequences caused by that overlap.
+  Cross-part coordination goes through the IEventBroker on `relations/topic/...`
+  topics declared in RelationsConstants (~92 call sites), not direct references.
+  Preference pages depend on the third-party `com.opcoach.e4.preferences` bundle.
+  Some public constants carry long-standing typos (PART_BOOKMAKRS,
+  TOPIC_DB_..._INITIALZED); fragments depend on them, so do not rename casually.
+
+  ## Database
+  Derby (embedded, default) and MySQL (external) sit behind IDBConnectionConfig
+  plus OSGi DataSourceFactory services. The schema is described DB-neutrally in
+  `org.elbe.relations.data/resources/dbCreateObjects.xml` and transformed to DDL
+  by a per-vendor XSL (db_derby.xsl, db_mysql.xsl). Any schema change means
+  editing that XML and checking BOTH stylesheets.
+  There is NO numbered migration system. Upgrades rely on structural inspection
+  (DBStructureChecker) and lazy creation (EventStoreChecker adds tblEventStore at
+  startup). Any change to the data model must state explicitly how existing user
+  databases reach the new shape.
+
+  ## Search and cloud
+  Full-text search is an SPI (IIndexer) with a single Lucene 10.2 provider and a
+  NoOpIndexer fallback. Keep application code on the vendor-neutral wrappers
+  (IndexerDocument, IndexerField), not on Lucene types.
+  Cloud storage (Azure, Dropbox, Google Drive) is UPLOAD-ONLY backup: either a
+  full export (`relations_all`) or an incremental one derived from the event
+  store (`relations_delta_<ts>`). There is no sync-down; do not design as if
+  there were. Backups are plain or zipped XML; there is no proprietary format.
+
+  ## Conventions and standing obligations
+  * The UI is bilingual English + German, and the German translation is currently
+    complete. Every user-facing string needs a `messages.properties` entry AND
+    its `messages_de.properties` sibling; OSGi metadata likewise needs
+    `OSGI-INF/l10n/bundle.properties` plus `bundle_de.properties`. Nothing in the
+    build enforces this.
+  * Third-party code is vendored as committed jars on Bundle-ClassPath (Lucene,
+    POI, the Google API stack, azure-storage, guava, grpc) rather than resolved
+    from the target platform. Updating one means replacing a binary by hand.
+  * No formatter or code-style configuration is committed; match the surrounding
+    file rather than reformatting.
+  * There is no `.gitattributes`, so Windows checkouts produce whole-file CRLF
+    diffs. Discount line-ending churn (`git diff --ignore-cr-at-eol`) before
+    judging what a diff actually changed.
+  * Bundles are versioned independently with `.qualifier`. There is no release
+    tooling, no tags and no changelog; a version bump is a manual edit of every
+    MANIFEST.MF, feature.xml and the .product.
+  * Licensing is currently inconsistent: the root LICENSE says GPLv3, source
+    headers say "GPL version 2.1", and the feature and product embed GPLv2. Do
+    not propagate any one of these as though it were settled.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

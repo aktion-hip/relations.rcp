@@ -21,25 +21,25 @@ package org.elbe.relations.defaultbrowser.internal;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PrecisionDimension;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
-import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.SelectionManager;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -53,8 +53,10 @@ import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.elbe.relations.RelationsConstants;
 import org.elbe.relations.defaultbrowser.Constants;
 import org.elbe.relations.defaultbrowser.internal.controller.ItemEditPart;
@@ -88,9 +90,6 @@ import jakarta.inject.Inject;
  */
 @SuppressWarnings("restriction")
 public class DefaultBrowserPart implements IRelationsBrowser {
-    private static final String INITIAL_SIZE = "dft.browser.initial.size"; //$NON-NLS-1$
-    private static final String SIZE_SEP = "/"; //$NON-NLS-1$
-    private static final org.eclipse.swt.graphics.Point NO_SIZE = new org.eclipse.swt.graphics.Point(0, 0);
 
     @Inject
     private IEventBroker eventBroker;
@@ -113,14 +112,10 @@ public class DefaultBrowserPart implements IRelationsBrowser {
     private IBrowserManager browserManager;
     private boolean visible;
     private boolean selectionChangeHandling = false;
-    private org.eclipse.swt.graphics.Point initialSize;
-    private org.eclipse.swt.graphics.Point oldSize;
 
     @PostConstruct
     void createControls(final Composite parent, final IEclipseContext context, final EMenuService service,
-            final MApplication application,
-            @Preference(nodePath = RelationsConstants.PREFERENCE_NODE, value = INITIAL_SIZE) final String initialSize,
-            final IBrowserManager browserManager) {
+            final MApplication application, final IBrowserManager browserManager) {
         this.context = context;
         this.application = application;
         this.browserManager = browserManager;
@@ -129,32 +124,7 @@ public class DefaultBrowserPart implements IRelationsBrowser {
         service.registerContextMenu(this.viewer.getControl(), Constants.BROWSER_POPUP);
 
         this.visible = true;
-        this.initialSize = getInitialSize(initialSize);
         setModel(this.browserManager.getCenterModel());
-    }
-
-    /**
-     * Workaround: load persisted value from preferences (instead of
-     * MPart.getPersistedState()).
-     */
-    private org.eclipse.swt.graphics.Point getInitialSize(final String initial) {
-        if (initial == null || initial.isEmpty()) {
-            return Constants.DEFAULT_SIZE;
-        }
-        final String[] size = initial.split(SIZE_SEP);
-        return size.length == 2
-                ? new org.eclipse.swt.graphics.Point(Integer.parseInt(size[0]), Integer.parseInt(size[1]))
-                        : Constants.DEFAULT_SIZE;
-    }
-
-    /**
-     * Workaround: we have to store the value to the preferences because we
-     * can't load persisted values of an MPart in case of a fragment.
-     */
-    @PersistState
-    void saveSize(@Preference(nodePath = RelationsConstants.PREFERENCE_NODE) final IEclipsePreferences preferences) {
-        final org.eclipse.swt.graphics.Point size = this.viewer.getControl().getSize();
-        preferences.put(INITIAL_SIZE, String.format("%s%s%s", size.x, SIZE_SEP, size.y)); //$NON-NLS-1$
     }
 
     private void createGraphicalViewer(final Composite parent, final IEclipseContext context) {
@@ -184,14 +154,14 @@ public class DefaultBrowserPart implements IRelationsBrowser {
                 }
             }
         });
-        control.addListener(SWT.Resize, event -> {
-            final org.eclipse.swt.graphics.Point newSize = control.getSize();
-            if (DefaultBrowserPart.this.oldSize != null) {
-                recenter(new PrecisionPoint((newSize.x - DefaultBrowserPart.this.oldSize.x) / 2,
-                        (newSize.y - DefaultBrowserPart.this.oldSize.y) / 2));
+        // the arrangement depends on the visible area and the monitor zoom, therefore, we re-arrange after each change
+        final Listener rearrange = event -> {
+            if (DefaultBrowserPart.this.model != null) {
+                setAroundCenter();
             }
-            DefaultBrowserPart.this.oldSize = newSize;
-        });
+        };
+        control.addListener(SWT.Resize, rearrange);
+        control.addListener(SWT.ZoomChanged, rearrange);
 
         this.viewer.addDropTargetListener(
                 (org.eclipse.jface.util.TransferDropTargetListener) ItemTransferDropTargetListener.create(this.viewer,
@@ -248,7 +218,6 @@ public class DefaultBrowserPart implements IRelationsBrowser {
         if (editPart != null) {
             // arrangement of children is controlled here
             setAroundCenter();
-            this.viewer.reveal(editPart);
         }
     }
 
@@ -365,10 +334,19 @@ public class DefaultBrowserPart implements IRelationsBrowser {
      * concentric circles around the center of the browser window.
      */
     private void setAroundCenter() {
+        final FigureCanvas canvas = (FigureCanvas) this.viewer.getControl();
+        final Rectangle area = canvas.getClientArea();
+        if (area.isEmpty() || !(this.viewer.getContents() instanceof final GraphicalEditPart contents)) {
+            // not laid out yet: the first resize with a real size arranges the items
+            return;
+        }
+        // The canvas' client area may be measured in device pixels (e.g. Draw2d's autoscaling on Windows), while the
+        // figures are positioned in the (scaled) coordinates of the contents layer. Hence, we convert the size.
+        final PrecisionDimension size = new PrecisionDimension(area.width, area.height);
+        contents.getFigure().translateToRelative(size);
         final Map<Object, EditPart> registry = this.viewer.getEditPartRegistry();
-        final org.eclipse.swt.graphics.Point size = getSize();
-        final PrecisionPoint lTranslate = new PrecisionPoint(size.x / 2 - RelationsConstants.ITEM_WIDTH / 2,
-                size.y / 2 - RelationsConstants.ITEM_HEIGHT);
+        final PrecisionPoint lTranslate = ItemPositionCalculator.getCenterTranslation(RelationsConstants.ITEM_WIDTH,
+                RelationsConstants.ITEM_HEIGHT, size.preciseWidth(), size.preciseHeight());
         moveFigure(registry, this.model.getCenter(), new PrecisionPoint(0, 0), lTranslate);
 
         final List<ItemAdapter> related = this.model.getRelatedItems();
@@ -383,19 +361,8 @@ public class DefaultBrowserPart implements IRelationsBrowser {
             lCalculator.recalculate(getRadius(++lCount), lNumber);
         }
         setPositions(registry, lCalculator.getPositions(), lOffset, related, lTranslate);
-        this.oldSize = size;
-    }
-
-    private org.eclipse.swt.graphics.Point getSize() {
-        Control lControl = this.viewer.getControl();
-        if (!lControl.isFocusControl()) {
-            return this.initialSize;
-        }
-        org.eclipse.swt.graphics.Point outSize;
-        while (NO_SIZE.equals(outSize = lControl.getSize())) {
-            lControl = lControl.getParent();
-        }
-        return outSize;
+        // the positions refer to the unscrolled view
+        canvas.scrollTo(0, 0);
     }
 
     private int getRadius(final int count) {
@@ -418,20 +385,6 @@ public class DefaultBrowserPart implements IRelationsBrowser {
         if (editPart != null && editPart instanceof final AbstractGraphicalEditPart part) {
             part.getFigure().setLocation(from.getTranslated(translate));
         }
-    }
-
-    /**
-     * Re-center the edit parts after a resize of the pane.
-     */
-    private void recenter(final PrecisionPoint translate) {
-        final Map<Object, EditPart> registry = this.viewer.getEditPartRegistry();
-        for (final EditPart editPart : registry.values()) {
-            if (editPart instanceof final AbstractGraphicalEditPart part) {
-                final Point from = part.getFigure().getBounds().getLocation();
-                part.getFigure().setLocation(from.getTranslated(translate));
-            }
-        }
-
     }
 
     // --- private classes ---

@@ -165,4 +165,10 @@ public final class RelationsConstants {
     public static final String PREFS_CLOUD_ACTIVE = "activeCloudConfig"; //$NON-NLS-1$
     public static final String CLOUD_SYNC_FULL = "relations_all"; //$NON-NLS-1$
     public static final String CLOUD_SYNC_DELTA = "relations_delta_"; //$NON-NLS-1$
+
+    // peer export: the listening port and the base names of the exported files
+    public static final String PREFS_PEER_PORT = "peerTransferPort"; //$NON-NLS-1$
+    public static final int DFT_PEER_PORT = 9042;
+    public static final String PEER_EXPORT_FULL = "relations_all"; //$NON-NLS-1$
+    public static final String PEER_EXPORT_DELTA = "relations_delta_"; //$NON-NLS-1$
 }

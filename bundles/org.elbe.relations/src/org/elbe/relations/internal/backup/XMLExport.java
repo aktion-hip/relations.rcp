@@ -46,182 +46,181 @@ import org.hip.kernel.exc.VException;
  * @author Luthiger Created on 04.10.2008
  */
 public class XMLExport implements AutoCloseable {
-	private final static String NL = System.getProperty("line.separator"); //$NON-NLS-1$
-	private final static String TAG_START = "<%s>" + NL; //$NON-NLS-1$
-	private final static String TAG_END = "</%s>" + NL; //$NON-NLS-1$
+    private final static String NL = System.getProperty("line.separator"); //$NON-NLS-1$
+    private final static String TAG_START = "<%s>" + NL; //$NON-NLS-1$
+    private final static String TAG_END = "</%s>" + NL; //$NON-NLS-1$
 
-	protected final static String NODE_ROOT = "RelationsExport"; //$NON-NLS-1$
-	public final static String NODE_TERMS = "TermEntries"; //$NON-NLS-1$
-	public final static String NODE_TEXTS = "TextEntries"; //$NON-NLS-1$
-	public final static String NODE_PERSONS = "PersonEntries"; //$NON-NLS-1$
-	public final static String NODE_RELATIONS = "RelationEntries"; //$NON-NLS-1$
+    protected final static String NODE_ROOT = "RelationsExport"; //$NON-NLS-1$
+    public final static String NODE_TERMS = "TermEntries"; //$NON-NLS-1$
+    public final static String NODE_TEXTS = "TextEntries"; //$NON-NLS-1$
+    public final static String NODE_PERSONS = "PersonEntries"; //$NON-NLS-1$
+    public final static String NODE_RELATIONS = "RelationEntries"; //$NON-NLS-1$
 
-	private final File exportFile;
-	private OutputStream outputStream = null;
-	private final Locale appLocale;
-	private final int numberOfItems;
+    private final File exportFile;
+    private OutputStream outputStream = null;
+    private final Locale appLocale;
+    private final int numberOfItems;
 
-	/**
-	 * XMLBackup constructor
-	 *
-	 * @param exportFileName
-	 *            String name of the backup file
-	 * @param appLocale
-	 *            {@link Locale} the application's locale
-	 * @param numberOfItems
-	 *            int
-	 * @throws IOException
-	 */
-	public XMLExport(final String exportFileName, final Locale appLocale,
-			final int numberOfItems)
-					throws IOException {
-		this.numberOfItems = numberOfItems;
-		this.exportFile = new File(exportFileName);
-		this.appLocale = appLocale;
-		deleteExisting(this.exportFile);
-		if (!this.exportFile.exists() && this.exportFile.getParentFile().exists()) {
-			if (this.exportFile.createNewFile()) { // NOPMD
-				if (!this.exportFile.canRead() || !this.exportFile.canWrite()) {
-					throw new IOException(
-							"Could not open file for read/write: " + this.exportFile.getName()); //$NON-NLS-1$
-				}
-				this.outputStream = createStream(this.exportFile);
-			}
-		}
-	}
+    /**
+     * XMLBackup constructor
+     *
+     * @param exportFileName
+     *            String name of the backup file
+     * @param appLocale
+     *            {@link Locale} the application's locale
+     * @param numberOfItems
+     *            int
+     * @throws IOException
+     */
+    public XMLExport(final String exportFileName, final Locale appLocale,
+            final int numberOfItems)
+                    throws IOException {
+        this.numberOfItems = numberOfItems;
+        this.exportFile = new File(exportFileName);
+        this.appLocale = appLocale;
+        deleteExisting(this.exportFile);
+        if (!this.exportFile.exists() && this.exportFile.getParentFile().exists()) {
+            if (this.exportFile.createNewFile()) { // NOPMD
+                if (!this.exportFile.canRead() || !this.exportFile.canWrite()) {
+                    throw new IOException(
+                            "Could not open file for read/write: " + this.exportFile.getName()); //$NON-NLS-1$
+                }
+                this.outputStream = createStream(this.exportFile);
+            }
+        }
+    }
 
-	protected OutputStream createStream(final File exportFile)
-			throws IOException {
-		final FileOutputStream lStream = new FileOutputStream(exportFile);
-		return new BufferedOutputStream(lStream);
-	}
+    protected OutputStream createStream(final File exportFile)
+            throws IOException {
+        final FileOutputStream lStream = new FileOutputStream(exportFile);
+        return new BufferedOutputStream(lStream);
+    }
 
-	private boolean deleteExisting(final File file) {
-		if (file.exists()) {
-			return file.delete();
-		}
-		return true;
-	}
+    private boolean deleteExisting(final File file) {
+        if (file.exists()) {
+            return file.delete();
+        }
+        return true;
+    }
 
-	/**
-	 * Perform the export to an XML file.
-	 *
-	 * @param monitor
-	 *            IProgressMonitor
-	 * @return int number of backuped database entries
-	 * @throws VException
-	 * @throws SQLException
-	 * @throws IOException
-	 */
-	public int export(final IProgressMonitor monitor) throws VException,
-	SQLException, IOException {
-		final SubMonitor progress = SubMonitor.convert(monitor, 100);
-		int outExported = 0;
+    /**
+     * Perform the export to an XML file.
+     *
+     * @param monitor
+     *            IProgressMonitor
+     * @return int number of backuped database entries
+     * @throws VException
+     * @throws SQLException
+     * @throws IOException
+     */
+    public int export(final IProgressMonitor monitor) throws VException, SQLException, IOException {
+        final SubMonitor progress = SubMonitor.convert(monitor, 100);
+        int outExported = 0;
 
-		appendText("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL); //$NON-NLS-1$
-		final DateFormat format = DateFormat.getDateTimeInstance(
-				DateFormat.MEDIUM, DateFormat.MEDIUM, this.appLocale);
-		appendText(String
-				.format("<%s date=\"%s\" countAll=\"%s\">" + NL, NODE_ROOT, //$NON-NLS-1$
-						format.format(Calendar.getInstance().getTime()),
-						this.numberOfItems));
+        appendText("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL); //$NON-NLS-1$
+        final DateFormat format = DateFormat.getDateTimeInstance(
+                DateFormat.MEDIUM, DateFormat.MEDIUM, this.appLocale);
+        appendText(String
+                .format("<%s date=\"%s\" countAll=\"%s\">" + NL, NODE_ROOT, //$NON-NLS-1$
+                        format.format(Calendar.getInstance().getTime()),
+                        this.numberOfItems));
 
-		outExported += processTable(
-				RelationsMessages.getString("XMLExport.export.terms"), //$NON-NLS-1$
-				NODE_TERMS, BOMHelper.getTermHome(), progress.newChild(25));
-		if (monitor.isCanceled()) {
-			return outExported;
-		}
+        outExported += processTable(
+                RelationsMessages.getString("XMLExport.export.terms"), //$NON-NLS-1$
+                NODE_TERMS, BOMHelper.getTermHome(), progress.newChild(25));
+        if (monitor.isCanceled()) {
+            return outExported;
+        }
 
-		outExported += processTable(
-				RelationsMessages.getString("XMLExport.export.texts"), //$NON-NLS-1$
-				NODE_TEXTS, BOMHelper.getTextHome(), progress.newChild(25));
-		if (monitor.isCanceled()) {
-			return outExported;
-		}
+        outExported += processTable(
+                RelationsMessages.getString("XMLExport.export.texts"), //$NON-NLS-1$
+                NODE_TEXTS, BOMHelper.getTextHome(), progress.newChild(25));
+        if (monitor.isCanceled()) {
+            return outExported;
+        }
 
-		outExported += processTable(
-				RelationsMessages.getString("XMLExport.export.persons"), //$NON-NLS-1$
-				NODE_PERSONS, BOMHelper.getPersonHome(), progress.newChild(25));
-		if (monitor.isCanceled()) {
-			return outExported;
-		}
+        outExported += processTable(
+                RelationsMessages.getString("XMLExport.export.persons"), //$NON-NLS-1$
+                NODE_PERSONS, BOMHelper.getPersonHome(), progress.newChild(25));
+        if (monitor.isCanceled()) {
+            return outExported;
+        }
 
-		outExported += processTable(
-				RelationsMessages.getString("XMLExport.export.relations"), //$NON-NLS-1$
-				NODE_RELATIONS, BOMHelper.getRelationHome(),
-				progress.newChild(25));
-		if (monitor.isCanceled()) {
-			return outExported;
-		}
+        outExported += processTable(
+                RelationsMessages.getString("XMLExport.export.relations"), //$NON-NLS-1$
+                NODE_RELATIONS, BOMHelper.getRelationHome(),
+                progress.newChild(25));
+        if (monitor.isCanceled()) {
+            return outExported;
+        }
 
-		appendEnd(NODE_ROOT);
+        appendEnd(NODE_ROOT);
 
-		return outExported;
-	}
+        return outExported;
+    }
 
-	protected int processTable(final String taskName, final String nodeName,
-			final GeneralDomainObjectHome home, final IProgressMonitor monitor)
-					throws IOException, VException, SQLException {
-		int outExported = 0;
+    protected int processTable(final String taskName, final String nodeName,
+            final GeneralDomainObjectHome home, final IProgressMonitor monitor)
+                    throws IOException, VException, SQLException {
+        int outExported = 0;
 
-		monitor.subTask(taskName);
-		appendStart(nodeName);
-		outExported += processSelection(home, monitor);
-		appendText(NL);
-		appendEnd(nodeName);
+        monitor.subTask(taskName);
+        appendStart(nodeName);
+        outExported += processSelection(home, monitor);
+        appendText(NL);
+        appendEnd(nodeName);
 
-		return outExported;
-	}
+        return outExported;
+    }
 
-	private void appendStart(final String text) throws IOException {
-		appendText(String.format(TAG_START, text));
-	}
+    private void appendStart(final String text) throws IOException {
+        appendText(String.format(TAG_START, text));
+    }
 
-	protected void appendEnd(final String text) throws IOException {
-		appendText(String.format(TAG_END, text));
-	}
+    protected void appendEnd(final String text) throws IOException {
+        appendText(String.format(TAG_END, text));
+    }
 
-	/**
-	 * Close the backup stream.
-	 *
-	 * @throws IOException
-	 */
-	@Override
-	public void close() throws IOException {
-		if (this.outputStream != null) {
-			this.outputStream.close();
-		}
-	}
+    /**
+     * Close the backup stream.
+     *
+     * @throws IOException
+     */
+    @Override
+    public void close() throws IOException {
+        if (this.outputStream != null) {
+            this.outputStream.close();
+        }
+    }
 
-	private int processSelection(final GeneralDomainObjectHome home,
-			final IProgressMonitor monitor)
-					throws VException, SQLException, IOException {
-		final SubMonitor progress = SubMonitor.convert(monitor,
-				home.getCount());
-		int outExported = 0;
-		final QueryResult result = home.select();
-		final AbstractSerializer visitor = new RelationsSerializer();
-		while (result.hasMoreElements()) {
-			final GeneralDomainObject model = result.nextAsDomainObject();
-			if (model != null) {
-				model.accept(visitor);
-				appendText(visitor.toString());
-				model.release();
-				visitor.clear();
-			}
+    private int processSelection(final GeneralDomainObjectHome home,
+            final IProgressMonitor monitor)
+                    throws VException, SQLException, IOException {
+        final SubMonitor progress = SubMonitor.convert(monitor,
+                home.getCount());
+        int outExported = 0;
+        final QueryResult result = home.select();
+        final AbstractSerializer visitor = new RelationsSerializer();
+        while (result.hasMoreElements()) {
+            final GeneralDomainObject model = result.nextAsDomainObject();
+            if (model != null) {
+                model.accept(visitor);
+                appendText(visitor.toString());
+                model.release();
+                visitor.clear();
+            }
 
-			outExported++;
-			progress.worked(1);
-		}
-		return outExported;
-	}
+            outExported++;
+            progress.worked(1);
+        }
+        return outExported;
+    }
 
-	protected void appendText(final String text) throws IOException {
-		if (this.outputStream == null) {
-			return;
-		}
-		this.outputStream.write(text.getBytes(StandardCharsets.UTF_8));
-	}
+    protected void appendText(final String text) throws IOException {
+        if (this.outputStream == null) {
+            return;
+        }
+        this.outputStream.write(text.getBytes(StandardCharsets.UTF_8));
+    }
 
 }

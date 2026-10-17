@@ -18,7 +18,7 @@
          </property>
          <property
                name="aboutText"
-               value="Relations Rich Client Application&#x0A;&#x0A;The Relations application is a tool for knowledge management.&#x0A;&#x0A;Version: 2.4.0&#x0A;&#x0A;(c) Copyright: RelationWare, B. Luthiger.&#x0A;Visit http://relations-rcp.sourceforge.net/&#x0A;&#x0A;This product is built on Eclipse RCP,&#x0A;see http://www.eclipse.org/">
+               value="Relations Rich Client Application&#x0A;&#x0A;The Relations application is a tool for knowledge management.&#x0A;&#x0A;Version: 2.5.0&#x0A;&#x0A;(c) Copyright: RelationWare, B. Luthiger.&#x0A;Visit http://relations-rcp.sourceforge.net/&#x0A;&#x0A;This product is built on Eclipse RCP,&#x0A;see http://www.eclipse.org/">
          </property>
          <property
                name="aboutImage"
@@ -116,6 +116,12 @@
             class="org.elbe.relations.internal.preferences.CloudConfigPrefPage"
             id="org.elbe.relations.prefs.cloud"
             name="%page.prefs.name.cloud.config">
+      </page>
+      <page
+            category="org.elbe.relations.prefs"
+            class="org.elbe.relations.internal.preferences.PeerConfigPrefPage"
+            id="org.elbe.relations.prefs.peer"
+            name="%page.prefs.name.peer.config">
       </page>
       <page
             class="org.elbe.relations.internal.e4.keys.RelationsKeysPreferencePage"
@@ -741,12 +747,5 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M">
       </key>
-   </extension>
-   <extension
-         id="org.elbe.relations.startup"
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.elbe.relations.utility.IntroDisplayStartup">
-      </startup>
    </extension>
 </plugin>
