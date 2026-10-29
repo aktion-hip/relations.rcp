@@ -2,7 +2,7 @@
 <feature
       id="relations.add.feature"
       label="Additional Eclipse plug-ins for Relations"
-      version="2.5.0.qualifier"
+      version="2.5.1.qualifier"
       provider-name="Relations">
 
    <description url="http://www.example.com/description">

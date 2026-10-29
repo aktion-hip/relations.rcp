@@ -1,6 +1,20 @@
 HISTORY Relations
 =================
 
+Release 2.5.1:
+=============
+
+2026/10/29:
+	- Improved peer-to-peer functionality for data upload: provide QR code to be scanned by *Relations Mobile* app.
+
+Release 2.5.0:
+=============
+
+2026/10/14:
+	- Added peer-to-peer functionality for data upload (bundle org.elbe.relations.peer.libp2p).
+	- Added welcome page.
+	- Fixed progress bar on splash screen.
+
 Release 2.4.0:
 =============
 

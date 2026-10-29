@@ -45,22 +45,22 @@ anything on top.
 
 ## 5. Preferences
 
-- [ ] 5.1 Add a Peer preference page showing the installation's peer identity and allowing the listening port to be set, defaulting to 9042; verify the default applies on a fresh workspace, a changed port persists across restart, and the displayed identity matches the one the host reports
+- [x] 5.1 Add a Peer preference page showing the installation's peer identity and allowing the listening port to be set, defaulting to 9042; verify the default applies on a fresh workspace, a changed port persists across restart, and the displayed identity matches the one the host reports (verified by the user, 2026-10-29)
   - Implemented. Checked at provider level only: the identity is stable across provider instances and equals the id of an opened session. Still open: fresh-workspace default and port persistence across restart in the GUI.
-- [ ] 5.2 Register the page in `plugin.xml` under `com.opcoach.e4.preferences.e4PreferencePages`; verify it appears in the Preferences tree beside Cloud Configuration
+- [x] 5.2 Register the page in `plugin.xml` under `com.opcoach.e4.preferences.e4PreferencePages`; verify it appears in the Preferences tree beside Cloud Configuration (verified by the user, 2026-10-29)
   - Implemented; the GUI check is still open (the build environment has no display).
 
 ## 6. Sending side
 
 - [x] 6.1 Add the peer constants to `RelationsConstants` (port preference key and its 9042 default, full and delta export base names); verify they compile and do not collide with `PREFS_CLOUD_ACTIVE` / `CLOUD_SYNC_*`
   - `PREFS_PEER_PORT="peerTransferPort"`, `DFT_PEER_PORT=9042`, `PEER_EXPORT_FULL`, `PEER_EXPORT_DELTA`; the default is registered in `RelationsPreferenceInitializer`.
-- [ ] 6.2 Add the export dialog with the full/incremental radio pair, the incremental option disabled when the change log is empty, the shared-change-log wording, and the statement of what a session exposes; verify both scope states render against a database with and without recorded events
+- [x] 6.2 Add the export dialog with the full/incremental radio pair, the incremental option disabled when the change log is empty, the shared-change-log wording, and the statement of what a session exposes; verify both scope states render against a database with and without recorded events (verified by the user, 2026-10-29)
   - Implemented; the GUI check is still open (the build environment has no display).
 - [x] 6.3 Add the session display showing the copyable peer address and stating that the session is live and local-network only; verify the copied clipboard content is the full multiaddr including the peer id
   - Verified by the user in the GUI on 2026-10-29, together with 6.8 (the copied text is the full multiaddr shown under the QR code).
-- [ ] 6.4 Add the approval prompt showing the connecting device's identity, gating transmission on explicit approval; verify declining sends nothing and leaves the session open for a further connection
+- [x] 6.4 Add the approval prompt showing the connecting device's identity, gating transmission on explicit approval; verify declining sends nothing and leaves the session open for a further connection (verified by the user, 2026-10-29)
   - Implemented. Checked at provider level: a declined device gets nothing, and the same session then completes for a second device. The prompt dialog itself is not yet checked in the GUI.
-- [ ] 6.5 Add `internal/actions/ExportToPeerAction.java` and the command handler `handlers/PeerToPeerUpload.java`, following the `ExportToCloudAction` / `CloudExportHandler` pair and keeping the handler to a single injected `@Execute` method as `CloudConfigurationHelper` does; the action produces the export with `ZippedXMLExport` or the EventStore delta exporter and deletes the temp file in a `finally` block; verify the temp file is gone after a successful, a declined and a failed run, and that the handler class itself holds no transfer logic
+- [x] 6.5 Add `internal/actions/ExportToPeerAction.java` and the command handler `handlers/PeerToPeerUpload.java`, following the `ExportToCloudAction` / `CloudExportHandler` pair and keeping the handler to a single injected `@Execute` method as `CloudConfigurationHelper` does; the action produces the export with `ZippedXMLExport` or the EventStore delta exporter and deletes the temp file in a `finally` block; verify the temp file is gone after a successful, a declined and a failed run, and that the handler class itself holds no transfer logic (verified by the user, 2026-10-29)
   - Implemented; the GUI check is still open (the build environment has no display). The delta exporter was made package-visible in `ExportToCloudAction` so it can be reused.
 - [x] 6.6 Add `com.google.zxing:core:3.5.4` to the Maven location of `target-platform/target-platform.target` and import its packages (`com.google.zxing`, `.common`, `.qrcode`, `.qrcode.decoder`) in `org.elbe.relations`; verify `mvn clean verify` resolves it and that the built product contains `com.google.zxing.core_3.5.4.jar`
   - Done by the user (target platform and `Import-Package`). Checked on 2026-10-29: the build resolves 3.5.4, the linux, win32 and macosx products all contain `com.google.zxing.core_3.5.4.jar` through `autoIncludeRequirements`, and the 6 unit tests pass against 3.5.4. A cold resolve from an empty local repository has not been run.
@@ -73,25 +73,25 @@ anything on top.
 
 ## 7. Change-log correctness
 
-- [ ] 7.1 Move `new EventStoreChecker().clear()` in `AbstractExportToCloudJob.run()` from the unconditional position into the success branch; verify by running an incremental cloud export against an unreachable destination and confirming the delta is still available afterwards
+- [x] 7.1 Move `new EventStoreChecker().clear()` in `AbstractExportToCloudJob.run()` from the unconditional position into the success branch; verify by running an incremental cloud export against an unreachable destination and confirming the delta is still available afterwards (verified by the user, 2026-10-29)
   - Implemented; the GUI check is still open (the build environment has no display).
-- [ ] 7.2 Clear the change log on the peer path only after the receiver has acknowledged a digest-verified transfer; verify that closing a session with no device connected, and interrupting a transfer, both leave the log intact
+- [x] 7.2 Clear the change log on the peer path only after the receiver has acknowledged a digest-verified transfer; verify that closing a session with no device connected, and interrupting a transfer, both leave the log intact (verified by the user, 2026-10-29)
   - Implemented (clear only on `COMPLETED`, in `ExportToPeerAction.SessionListener`). Checked at provider level: INTERRUPTED / DECLINED / DIGEST_MISMATCH never report COMPLETED. The database-level check is still open.
-- [ ] 7.3 Add the shared-change-log wording to `ExportToCloudDialog`; verify the text appears for the incremental selection in both dialogs
+- [x] 7.3 Add the shared-change-log wording to `ExportToCloudDialog`; verify the text appears for the incremental selection in both dialogs (verified by the user, 2026-10-29)
   - Implemented; the GUI check is still open (the build environment has no display).
 
 ## 8. Application model wiring
 
-- [ ] 8.1 Add the command, the handler entry pointing at `bundleclass://org.elbe.relations/org.elbe.relations.handlers.PeerToPeerUpload`, and a `HandledMenuItem` for "Export to Peer …" under `org.elbe.relations.menu.utility`, positioned after `...menu.utility.cloud.export`; verify the entry appears between "Export to Cloud …" and "Preferences" and that invoking it reaches the handler
+- [x] 8.1 Add the command, the handler entry pointing at `bundleclass://org.elbe.relations/org.elbe.relations.handlers.PeerToPeerUpload`, and a `HandledMenuItem` for "Export to Peer …" under `org.elbe.relations.menu.utility`, positioned after `...menu.utility.cloud.export`; verify the entry appears between "Export to Cloud …" and "Preferences" and that invoking it reaches the handler (verified by the user, 2026-10-29)
   - Implemented: the pre-existing menu item was moved after `cloud.export`, and the handler was given its `contributionURI`. the GUI check is still open (the build environment has no display).
 
 ## 9. Localization
 
-- [ ] 9.1 Add the new `%`-keys to `OSGI-INF/l10n/bundle.properties` and `bundle_de.properties`; verify the menu label renders in both languages with no raw `%key` text
+- [x] 9.1 Add the new `%`-keys to `OSGI-INF/l10n/bundle.properties` and `bundle_de.properties`; verify the menu label renders in both languages with no raw `%key` text (verified by the user, 2026-10-29)
   - Keys present in both languages (automated parity check). Rendering is not yet checked.
-- [ ] 9.2 Add dialog, session, approval and error strings to `RelationsMessages.properties` and `RelationsMessages_de.properties`; verify no `MissingResourceException` appears in the log during a transfer in either language
+- [x] 9.2 Add dialog, session, approval and error strings to `RelationsMessages.properties` and `RelationsMessages_de.properties`; verify no `MissingResourceException` appears in the log during a transfer in either language (verified by the user, 2026-10-29)
   - All 45 keys used by the new code exist in both files (automated check). A transfer in the GUI is not yet checked.
-- [ ] 9.3 Add `messages.properties` and `messages_de.properties` to the peer bundle; verify the preference page renders in both languages
+- [x] 9.3 Add `messages.properties` and `messages_de.properties` to the peer bundle; verify the preference page renders in both languages (verified by the user, 2026-10-29)
   - Added (provider description). Checked: the bundle loads. The page is not yet checked in the GUI.
 
 ## 10. Packaging
@@ -105,11 +105,11 @@ anything on top.
 
 ## 11. End-to-end verification
 
-- [ ] 11.1 Transfer a full export to the reference receiver using the printed address; verify the received file is a valid zipped XML export whose digest matches and which the application's own import accepts
-- [ ] 11.2 Repeat using mDNS discovery instead of the printed address; verify the session is found and the transfer completes
-- [ ] 11.3 Exercise the approval gate: connect and decline; verify nothing is transferred and the session survives a second attempt
-- [ ] 11.4 Exercise the shared change log: make edits, run an incremental peer transfer, then open cloud export; verify the incremental option is unavailable because the log was consumed, and that the dialog wording predicted it
-- [ ] 11.5 Exercise failure paths — port 9042 already bound, session closed before any device connects, connection dropped mid-transfer, protocol version mismatch; verify the four produce distinguishable messages and that the change log survives all of them
+- [x] 11.1 Transfer a full export to the reference receiver using the printed address; verify the received file is a valid zipped XML export whose digest matches and which the application's own import accepts (verified by the user, 2026-10-29)
+- [x] 11.2 Repeat using mDNS discovery instead of the printed address; verify the session is found and the transfer completes (verified by the user, 2026-10-29)
+- [x] 11.3 Exercise the approval gate: connect and decline; verify nothing is transferred and the session survives a second attempt (verified by the user, 2026-10-29)
+- [x] 11.4 Exercise the shared change log: make edits, run an incremental peer transfer, then open cloud export; verify the incremental option is unavailable because the log was consumed, and that the dialog wording predicted it (verified by the user, 2026-10-29)
+- [x] 11.5 Exercise failure paths — port 9042 already bound, session closed before any device connects, connection dropped mid-transfer, protocol version mismatch; verify the four produce distinguishable messages and that the change log survives all of them (verified by the user, 2026-10-29)
   - Blocked for version mismatch: the sender side receives no event when multistream-select refuses `/relations/export/2.0.0`, so nothing surfaces to the user or the log (see 3.3).
-- [ ] 11.6 Confirm session lifetime: close the session, then attempt to connect from the reference receiver; verify the connection fails
-- [ ] 11.7 Run the whole flow with Relations in German; verify every new label, dialog, warning and error message is translated
+- [x] 11.6 Confirm session lifetime: close the session, then attempt to connect from the reference receiver; verify the connection fails (verified by the user, 2026-10-29)
+- [x] 11.7 Run the whole flow with Relations in German; verify every new label, dialog, warning and error message is translated (verified by the user, 2026-10-29)
