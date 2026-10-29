@@ -60,7 +60,7 @@ import org.eclipse.ui.internal.about.AboutTextManager;
 
 /** Displays information about the product.<br>
  * Note: the about text displayed containing the application's version number is retrieved from:<br>
- * <i>elations.rcp.product</i> -> Branding
+ * <i>/org.elbe.relations/plugin.xml</i> -> aboutText
  *
  * @author lbenno <br>
  * @see org.eclipse.ui.internal.dialogs.AboutDialog */
