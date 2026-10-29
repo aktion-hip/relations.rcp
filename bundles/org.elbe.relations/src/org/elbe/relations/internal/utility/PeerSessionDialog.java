@@ -20,7 +20,7 @@ package org.elbe.relations.internal.utility;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,24 +30,30 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.elbe.relations.RelationsMessages;
 import org.elbe.relations.services.IPeerSession;
 
-/** Displays an open peer transfer session: the address to connect to, the nature of the
- * session and the state of its transfers. Closing the dialog ends the session.
+/** Displays an open peer transfer session: the address to connect to (as QR code to scan and
+ * as text to copy), the nature of the session and the state of its transfers. Closing the
+ * dialog ends the session.
  *
  * @author lbenno */
 public class PeerSessionDialog extends Dialog {
     private static final int TEXT_WIDTH = 480;
+    /** Pixels per QR module at 100% zoom; a typical session address then gives a code of about 250 px. */
+    private static final int QR_MODULE_PIXELS = 5;
 
     private final IPeerSession session;
-    private Combo addresses;
+    private Text address;
     private Label status;
 
     /** PeerSessionDialog constructor.
@@ -69,35 +75,60 @@ public class PeerSessionDialog extends Dialog {
 
         createWrappingLabel(composite, 3).setText(RelationsMessages.getString("PeerSessionDialog.msg.live")); //$NON-NLS-1$
 
+        final Optional<String> chosen = PeerAddresses.choose(this.session.getAddresses());
+        chosen.ifPresent(reachable -> createQrCode(composite, reachable));
+
         new Label(composite, SWT.NONE).setText(RelationsMessages.getString("PeerSessionDialog.lbl.address")); //$NON-NLS-1$
-        this.addresses = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
-        this.addresses.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        this.address = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+        this.address.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         final Button copy = new Button(composite, SWT.PUSH);
         copy.setText(RelationsMessages.getString("PeerSessionDialog.btn.copy.lbl")); //$NON-NLS-1$
         copy.addSelectionListener(widgetSelectedAdapter(e -> copyAddress()));
 
-        final List<String> reachable = this.session.getAddresses();
-        if (reachable.isEmpty()) {
-            this.addresses.setEnabled(false);
+        if (chosen.isEmpty()) {
+            this.address.setEnabled(false);
             copy.setEnabled(false);
             createWrappingLabel(composite, 3).setText(
                     RelationsMessages.getString("PeerSessionDialog.msg.no.address")); //$NON-NLS-1$
         } else {
-            this.addresses.setItems(reachable.toArray(new String[0]));
-            this.addresses.select(0);
+            this.address.setText(chosen.get());
             createWrappingLabel(composite, 3).setText(
                     RelationsMessages.getString("PeerSessionDialog.msg.address.scope")); //$NON-NLS-1$
         }
 
-        createWrappingLabel(composite, 3).setText(this.session.isDiscoverable()
-                ? RelationsMessages.getString("PeerSessionDialog.msg.discoverable") //$NON-NLS-1$
-                : RelationsMessages.getString("PeerSessionDialog.msg.not.discoverable")); //$NON-NLS-1$
+        if (!this.session.isDiscoverable()) {
+            createWrappingLabel(composite, 3).setText(
+                    RelationsMessages.getString("PeerSessionDialog.msg.not.discoverable")); //$NON-NLS-1$
+        }
 
         final Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
         separator.setLayoutData(GridDataFactory.fillDefaults().span(3, 1).grab(true, false).create());
         this.status = createWrappingLabel(composite, 3);
         this.status.setText(RelationsMessages.getString("PeerSessionDialog.status.waiting")); //$NON-NLS-1$
         return composite;
+    }
+
+    /** Displays the address as QR code for a phone to scan. The image is rendered anew for each
+     * monitor zoom, so that the modules stay sharp instead of being resampled. */
+    private void createQrCode(final Composite parent, final String reachable) {
+        final ImageData base;
+        try {
+            base = QrCodeImage.render(reachable, QR_MODULE_PIXELS);
+        }
+        catch (final IllegalArgumentException exc) {
+            // the address can't be encoded; the text below still allows copying it
+            return;
+        }
+        createWrappingLabel(parent, 3).setText(RelationsMessages.getString("PeerSessionDialog.msg.scan")); //$NON-NLS-1$
+
+        final ImageDataProvider provider = zoom -> zoom == 100 ? base
+                : QrCodeImage.render(reachable, Math.round(QR_MODULE_PIXELS * zoom / 100f));
+        final Image image = new Image(parent.getDisplay(), provider);
+        final Label code = new Label(parent, SWT.NONE);
+        code.setImage(image);
+        code.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).align(SWT.CENTER, SWT.CENTER)
+                .grab(true, false).indent(0, 5).create());
+        code.addDisposeListener(e -> image.dispose());
     }
 
     private Label createWrappingLabel(final Composite parent, final int span) {
@@ -109,13 +140,13 @@ public class PeerSessionDialog extends Dialog {
 
     /** Copies the selected address, which includes the peer identity, to the clipboard. */
     private void copyAddress() {
-        final String address = this.addresses.getText();
-        if (address.isEmpty()) {
+        final String text = this.address.getText();
+        if (text.isEmpty()) {
             return;
         }
         final Clipboard clipboard = new Clipboard(getShell().getDisplay());
         try {
-            clipboard.setContents(new Object[] { address }, new Transfer[] { TextTransfer.getInstance() });
+            clipboard.setContents(new Object[] { text }, new Transfer[] { TextTransfer.getInstance() });
         }
         finally {
             clipboard.dispose();

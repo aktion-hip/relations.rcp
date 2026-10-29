@@ -62,6 +62,12 @@ fail to connect. Never display or pin the announced id.
 Discovery is a convenience. When it is unavailable, the user can read the session address
 from Relations and enter it directly; that address *does* carry a correct `/p2p/` component.
 
+Relations also shows that address as a **QR code**. The code contains exactly the displayed
+text, the plain multiaddr `/ip4/<address>/tcp/<port>/p2p/<peer id>`, with no URI scheme or
+other wrapping. A receiver treats a scanned code the same as a typed address. Relations
+puts the first local-network (site-local) IPv4 address in the code, and otherwise the first
+IPv4 address it has.
+
 ## 3. Framing
 
 Control messages are **frames**: a 4-byte unsigned big-endian length, followed by that many

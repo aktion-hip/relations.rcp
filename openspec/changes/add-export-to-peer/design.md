@@ -111,6 +111,40 @@ and could not renew reservations; issue #339 (open since 2023-10-16) reports
 `NetworkImpl` throwing on any `/p2p-circuit/` dial. Depending on it would be depending on
 known-broken code, and it would additionally require operating a relay.
 
+### The session address is shown as a QR code
+
+The session dialog shows one address as a QR code, with the same address below it as
+read-only text and a Copy button. The drop-down of all reachable addresses is gone. A phone
+scans the code instead of the user typing about 90 characters.
+
+- **Payload: the plain multiaddr.** The code contains exactly the string the user would
+  otherwise type, `/ip4/<address>/tcp/<port>/p2p/<peer id>`. There is no URI scheme and no
+  JSON wrapper. The receiver handles a scan the same way as typed input (PROTOCOL.md §2),
+  and this address carries the correct `/p2p/` identity that mDNS mangles. A URI
+  (`relations://...`) would let a camera app open Relations directly. JSON would carry a
+  version. Neither is needed now, and both would add a format the Android side must parse.
+- **One address, chosen in the host bundle.** The address is the first `/ip4/` entry of
+  `IPeerSession.getAddresses()` whose host is site-local. Otherwise it is the first
+  `/ip4/` entry. With no IPv4 address there is no QR code and Copy is disabled.
+  `getReachableAddresses()` already drops interfaces that are down or loopback, and it
+  enumerates in the same order as `getLocalLANIPv4Address()`, which feeds mDNS. So the QR
+  code and the mDNS announcement name the same address, and `IPeerSession` gains no
+  method. The selection is a small helper (`PeerAddresses`) that is tested without a
+  network.
+- **zxing `core` only, from the target platform.** `com.google.zxing:core:3.5.4` is an
+  entry in the target platform's existing Maven location. `org.elbe.relations` imports
+  its packages with `Import-Package`, the same way it uses htmlcleaner. The jar ships its
+  own OSGi manifest (`com.google.zxing.core`), and the product's
+  `autoIncludeRequirements="true"` puts the bundle into every platform build, so no
+  feature or product entry is needed. This replaces an earlier attempt to commit the jar
+  on `Bundle-ClassPath`. `javase` is not used because it renders through AWT.
+- **Rendering straight into SWT, crisp at every zoom.** `QRCodeWriter` produces a
+  `BitMatrix` (error correction M, quiet zone of 4 modules). `QrCodeImage` paints the
+  matrix into a 1-bit `ImageData` with an integer number of pixels per module. The dialog
+  creates the `Image` from an `ImageDataProvider` that renders again for each monitor zoom
+  (5 px per module at 100 %), so SWT never resamples the code into a blurry, hard-to-scan
+  bitmap. The image is disposed with the dialog.
+
 ### The counterparty is an external Android application
 
 The receiver is a companion app on the user's own phone, not another Relations instance.
