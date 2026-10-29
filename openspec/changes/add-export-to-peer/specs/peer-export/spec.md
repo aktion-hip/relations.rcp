@@ -112,14 +112,41 @@ transmitted to a device the user has not approved for that session.
 
 ### Requirement: The peer address is presented for sharing
 
-On opening a session the application SHALL present the address at which it can be
-reached, including its peer identity, in a form the user can copy in one action. The
+On opening a session the application SHALL present one address at which it can be
+reached, including its peer identity, both as a QR code that a phone can scan and as text
+the user can copy in one action. The QR code SHALL encode exactly that text, the plain
+multiaddr (`/ip4/<address>/tcp/<port>/p2p/<peer id>`), with no wrapping format. The address
+SHALL be the first IPv4 address on the local network (a private, site-local address);
+when no such address exists, the first IPv4 address the session reports SHALL be used.
+When the session reports no IPv4 address, no QR code SHALL be shown, copying SHALL be
+unavailable, and the application SHALL state that no network address was found. The
 presentation SHALL state that the address is valid only for the duration of the session.
 
 #### Scenario: Address is shown and can be copied
 
 - **WHEN** a transfer session is opened
 - **THEN** the peer address is displayed and can be copied to the clipboard in one action
+
+#### Scenario: Address is scanned from the QR code
+
+- **WHEN** a transfer session is opened on a computer with a local-network IPv4 address
+- **AND** the user scans the displayed QR code with a phone
+- **THEN** the scanned text is exactly the displayed address, including the peer identity, and the receiving application can connect with it
+
+#### Scenario: Local-network address is preferred
+
+- **WHEN** the computer has several IPv4 addresses, one of them on the local network
+- **THEN** the QR code and the displayed address use the local-network address
+
+#### Scenario: No local-network address
+
+- **WHEN** the computer has IPv4 addresses but none on the local network
+- **THEN** the QR code and the displayed address use the first IPv4 address the session reports
+
+#### Scenario: No IPv4 address
+
+- **WHEN** the session reports no IPv4 address
+- **THEN** no QR code is shown, copying is unavailable, and the user is told that no network address was found
 
 #### Scenario: Address is qualified as session-scoped
 

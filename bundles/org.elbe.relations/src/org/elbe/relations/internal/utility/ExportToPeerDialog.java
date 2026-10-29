@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.elbe.relations.RelationsMessages;
 
-/** Dialog to start the export to a peer: lets the user choose the scope and states what a
- * transfer session exposes before it is opened.
+/** Dialog to start the export to a peer: lets the user choose the scope and states what a transfer session exposes
+ * before it is opened.
  *
  * @author lbenno */
 public class ExportToPeerDialog extends Dialog {
@@ -107,7 +107,7 @@ public class ExportToPeerDialog extends Dialog {
         this.incrementalFlag = incremental;
         this.sharedLogNote.setText(incremental
                 ? RelationsMessages.getString("ExportToPeerDialog.msg.shared.log") //$NON-NLS-1$
-                : ""); //$NON-NLS-1$
+                        : ""); //$NON-NLS-1$
         this.sharedLogNote.getParent().layout(true);
     }
 
