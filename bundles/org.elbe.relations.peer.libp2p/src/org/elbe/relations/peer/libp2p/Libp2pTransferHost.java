@@ -116,7 +116,7 @@ public class Libp2pTransferHost {
             started.start().get(OPERATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             this.host = started;
             this.listeningPort = port;
-            this.discovery = new MDnsDiscovery(started, SERVICE_TAG, QUERY_INTERVAL_SECONDS, null);
+            this.discovery = new MDnsDiscovery(started, SERVICE_TAG, QUERY_INTERVAL_SECONDS, getLocalLANIPv4Address());
             startDiscovery();
         }
         catch (final ExecutionException exc) {
@@ -202,6 +202,25 @@ public class Libp2pTransferHost {
             // No interfaces could be enumerated; the caller still has the listen addresses.
         }
         return found;
+    }
+    
+    private static InetAddress getLocalLANIPv4Address() {
+        try {
+            for (final NetworkInterface nic : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if (!nic.isUp() || nic.isLoopback()) {
+                    continue;
+                }
+                for (final InetAddress address : Collections.list(nic.getInetAddresses())) {
+                    if (address instanceof java.net.Inet4Address && address.isSiteLocalAddress()) {
+                        return address;
+                    }
+                }
+            }
+        }
+        catch (final SocketException exc) {
+            // No interfaces could be enumerated; the caller still has the listen addresses.
+        }
+        return null;
     }
 
     private void startDiscovery() {
