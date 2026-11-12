@@ -6,5 +6,6 @@
 	<topic label="Configuration Plug-ins" href="html/reference/configuration.html" />
 	<topic label="Print-out Plug-ins" href="html/reference/printout.html" />
 	<topic label="DTD of XML export" href="html/reference/xml_export.html" />
+ 	<topic label="Peer-to-Peer: Firewall" href="html/reference/p2p_firewall.html" />
 	<topic label="Shortcut keys" href="html/reference/shortcuts.html" />
 </toc>

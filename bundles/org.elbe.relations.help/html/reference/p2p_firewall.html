@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="STYLESHEET" href="../css/book.css" charset="ISO-8859-1" type="text/css" />
+<link rel="STYLESHEET" href="../css/schema.css" charset="ISO-8859-1" type="text/css" />
+<title>Peer-to-Peer: Firewall</title>
+</head>
+<body>
+<h1>Peer-to-Peer: Firewall</h1>
+<p>For peer-to-peer uploads, the smartphone must be able to establish a connection with the computer.<br>
+In some cases, you may need to adjust the firewall on the computer to ensure that the port (e.g. <i>9042</i>) for this connection is open.	
+</p>
+<p></p>
+
+<style type="text/css">
+<!--
+p.code#dtd {
+text-indent:-2em;
+margin-left:2em
+}
+-->
+</style>
+
+<h3>Firewall Rule</h3>
+<p>For Windows PowerShell (<i>Admin mode</i>)</p>
+
+<pre>
+<p class="code" id=tag>New-NetFirewallRule -DisplayName "Open for Relations.RCP" -Direction Inbound -Protocol TCP -LocalPort 9042 -Action Allow -Profile Private</p>
+</pre>
+
+<img src="../img/ngrelc.png" />
+<ul>
+  <li><a href="../tasks/p2p_upload.html">Upload to Smartphone</a>
+</ul>
+
+</body>
+</html>
