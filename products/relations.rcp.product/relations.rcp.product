@@ -34,7 +34,7 @@ see http://www.eclipse.org/
 
    <splash
       location="org.elbe.relations"
-      startupProgressRect="2,286,450,12"
+      startupProgressRect="1,286,449,12"
       startupMessageRect="15,263,450,20"
       startupForegroundColor="FFFFFF" />
    <launcher name="Relations">

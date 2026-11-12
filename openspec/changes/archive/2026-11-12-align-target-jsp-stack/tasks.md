@@ -16,5 +16,5 @@
 ## 3. Runtime verification
 
 - [x] 3.1 Start the built product's OSGi framework headless (copy of `configuration/`, `-Declipse.ignoreApp=true -Dosgi.noShutdown=true -console`) and run `diag org.eclipse.equinox.jsp.jasper` and `ss jasper`. Verify that the jasper bundles are RESOLVED/ACTIVE and that no unresolved-requirement error on `org.apache.jasper.servlet` is logged.
-- [ ] 3.2 (User, in the IDE) Reload the target in the target editor, set it as the active target platform, and start the usual Relations launch configuration. Verify that the `Could not resolve module: org.eclipse.equinox.jsp.jasper` error no longer appears. If it does, apply the fallback in design.md, Decision 5 (enable "Include required Plug-ins automatically") and record the outcome.
-- [ ] 3.3 (User) In the running application, open Help > Help Contents. Verify that the help pages are displayed without a server or JSP error.
+- [x] 3.2 (User, in the IDE) Reload the target in the target editor, set it as the active target platform, and start the usual Relations launch configuration. Verify that the `Could not resolve module: org.eclipse.equinox.jsp.jasper` error no longer appears. If it does, apply the fallback in design.md, Decision 5 (enable "Include required Plug-ins automatically") and record the outcome.
+- [x] 3.3 (User) In the running application, open Help > Help Contents. Verify that the help pages are displayed without a server or JSP error.

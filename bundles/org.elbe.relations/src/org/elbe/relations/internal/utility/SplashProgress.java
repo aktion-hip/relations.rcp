@@ -62,8 +62,9 @@ public final class SplashProgress {
     private static final String PRODUCT_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
     private static final String PRODUCT_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
     private static final String PRODUCT_FOREGROUND = "startupForegroundColor"; //$NON-NLS-1$
-    // fallbacks: the values of the Relations product
-    private static final Rectangle DFT_PROGRESS_RECT = new Rectangle(2, 286, 450, 12);
+    // fallbacks: the values of the Relations product, value is set in
+    // bundles/org.elbe.relations/plugin.xml/startupProgressRect
+    private static final Rectangle DFT_PROGRESS_RECT = new Rectangle(0, 286, 450, 12);
     private static final Rectangle DFT_MESSAGE_RECT = new Rectangle(15, 263, 450, 20);
     private static final int DFT_FOREGROUND = 0xFFFFFF;
 

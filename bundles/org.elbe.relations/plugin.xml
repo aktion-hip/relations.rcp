@@ -58,7 +58,7 @@
          </property>
          <property
                name="startupProgressRect"
-               value="2,286,450,12">
+               value="1,286,449,12">
          </property>
          <property
                name="preferenceCustomization"

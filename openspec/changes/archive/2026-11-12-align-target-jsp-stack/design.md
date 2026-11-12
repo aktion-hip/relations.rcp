@@ -91,6 +91,9 @@ Observed facts (checked 2026-10-13):
    setting). Adding the bundles to `relations.add.feature` is a separate
    follow-up change, not part of this one.
 
+   Outcome (task 3.2): the IDE launch succeeded with the target fix alone; the
+   fallback was not needed.
+
 ## Risks / Trade-offs
 
 - [Another repository in the target still brings in a second Jasper, e.g.

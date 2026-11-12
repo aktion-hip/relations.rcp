@@ -233,3 +233,9 @@ something they did not anticipate.
   not bound memory: a 32 MB heap hung. The cause appears to lie in jvm-libp2p's mplex/Noise
   write path, and it needs a decision (see the apply summary). With the per-chunk wait that
   is implemented, a 20 MB transfer to a receiver reading at 20 ms per read did complete.
+
+## Outcome: Android companion review (task 5.4)
+
+PROTOCOL.md was shared with the Android companion application's maintainer.
+The maintainer accepted the protocol as specified, including the confirmation
+code, `sha256` and `error.code`. No disagreements; the version can be frozen.

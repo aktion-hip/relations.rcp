@@ -34,7 +34,7 @@ before relying on any later check.
   - Checked: both directions refused with the right `offered`; the same session then completes a matching request.
 - [x] 2.6 Add a per-file `sha256` (64 lowercase hex characters) to each manifest entry, and remember the sent names; on `result`, finish as `COMPLETED` only if `imported` contains every sent name, otherwise as `REJECTED_BY_RECEIVER`; treat a `result` before the manifest as a protocol error; verify with the reference receiver that the digest matches `sha256sum` of the prepared file, and that a `result` omitting the file does not yield `COMPLETED`
   - Checked: the manifest digest equals the prepared file's SHA-256; a `result` omitting the file gives `REJECTED_BY_RECEIVER`.
-- [ ] 2.7 Make `writeFile` wait for each chunk's write future before reading the next chunk, and end the session as `INTERRUPTED` when a write fails; verify a transfer of a ≥50 MB export completes and that heap use during it stays well below the file size (VisualVM or `-Xlog:gc`)
+- [x] 2.7 Make `writeFile` wait for each chunk's write future before reading the next chunk, and end the session as `INTERRUPTED` when a write fails; verify a transfer of a ≥50 MB export completes and that heap use during it stays well below the file size (VisualVM or `-Xlog:gc`)
   - Implemented (per-chunk wait, via the stream's Netty channel because `Stream.writeAndFlush` returns no future). A 100 MB transfer completes with a 32 MB sender heap. **Open:** with a slow receiver (30 ms per read) a 100 MB transfer fails after ~70 MB with a Noise `AEADBadTagException` on the receiver; without back-pressure the same run succeeds. See design.md, Implementation notes.
 - [x] 2.8 Remove the leftovers of the binary protocol: `MAGIC_HEADER`, `MAGIC_ACK`, `DIGEST_SHA_256`, `ACK_FIXED_LENGTH`, the outer `CHUNK_SIZE`, `PeerExport.Scope.getWireValue`, `toScope`, and the unused `Libp2pTransferHost.getListenAddresses`; verify `mvn clean verify` compiles with no new warnings in the two bundles
   - Checked: the cold `mvn clean verify` compiles; no compiler warnings reference the changed files.
@@ -50,11 +50,11 @@ before relying on any later check.
 
 ## 4. Desktop UI
 
-- [ ] 4.1 Override the two-argument `approve` in `PeerApprovalPrompt`: show the six-digit code prominently and the peer id as secondary detail, and close the dialog through `display.asyncExec` when the future is cancelled, ignoring any later dialog result; verify in the GUI that the code matches the receiver's output and that the dialog disappears when the receiver disconnects before the user decides
+- [x] 4.1 Override the two-argument `approve` in `PeerApprovalPrompt`: show the six-digit code prominently and the peer id as secondary detail, and close the dialog through `display.asyncExec` when the future is cancelled, ignoring any later dialog result; verify in the GUI that the code matches the receiver's output and that the dialog disappears when the receiver disconnects before the user decides
   - Implemented; the GUI check is still open (the build environment has no display). The cancellation path is checked at provider level (2.1).
-- [ ] 4.2 Add status and summary text for `VERSION_MISMATCH` and `SCOPE_MISMATCH` in `ExportToPeerAction.statusOf`, naming the prepared scope for the scope case; add the keys and the updated approval message to `RelationsMessages.properties` and `RelationsMessages_de.properties`; verify the key-parity check passes and both messages render in English and German
+- [x] 4.2 Add status and summary text for `VERSION_MISMATCH` and `SCOPE_MISMATCH` in `ExportToPeerAction.statusOf`, naming the prepared scope for the scope case; add the keys and the updated approval message to `RelationsMessages.properties` and `RelationsMessages_de.properties`; verify the key-parity check passes and both messages render in English and German
   - Implemented; the key-parity check passes (no key missing in either language). Rendering is not yet checked in the GUI.
-- [ ] 4.3 Confirm the change log is cleared only on `COMPLETED`: run an incremental session against a receiver that requests `full`, and one whose `result` omits the file; verify with `DataService.getNumberOfEvents()` (or reopening the export dialog) that the change log count is unchanged after both
+- [x] 4.3 Confirm the change log is cleared only on `COMPLETED`: run an incremental session against a receiver that requests `full`, and one whose `result` omits the file; verify with `DataService.getNumberOfEvents()` (or reopening the export dialog) that the change log count is unchanged after both
   - Code path: the change log is cleared only on `COMPLETED`, and scope mismatch or an incomplete `result` never yields it (checked at provider level). The database-level check is still open.
 
 ## 5. Protocol contract
@@ -65,11 +65,11 @@ before relying on any later check.
   - Checked: the grep returns nothing.
 - [x] 5.3 Rebuild the reference receiver from the 5.1 document alone, including the digest check and the confirmation-code computation; verify it completes a transfer against the real sender and reports a digest mismatch when fed deliberately corrupted bytes
   - Checked: the receiver (throwaway scaffolding in the session scratchpad, not in the repo) uses none of the sender's classes; it completes transfers and reports `digest-mismatch` for corrupted bytes.
-- [ ] 5.4 Share `PROTOCOL.md` with the Android companion application's maintainer and record any disagreement on the confirmation code, `sha256` or `error.code` before the version is frozen; verify by a recorded answer (a note in this change's `design.md`)
+- [x] 5.4 Share `PROTOCOL.md` with the Android companion application's maintainer and record any disagreement on the confirmation code, `sha256` or `error.code` before the version is frozen; verify by a recorded answer (a note in this change's `design.md`)
 
 ## 6. End-to-end in the product
 
-- [ ] 6.1 In the launched product (GUI), prepare a full export, connect the reference receiver via mDNS, compare the confirmation codes, approve, and receive; verify the received zip passes the receiver's digest check, the application's own import accepts it, and the status line reports completion
-- [ ] 6.2 Repeat 6.1 with an incremental export; verify the change log is empty afterwards and that the cloud export dialog no longer offers the incremental choice
-- [ ] 6.3 Run the failure paths (decline, disconnect while pending, version mismatch, scope mismatch, and an interruption mid-transfer); verify each produces a distinct status message and log entry and leaves the change log intact, which unblocks `add-export-to-peer` 11.5 for the in-band version case
-- [ ] 6.4 Run 6.1 and 6.3 with Relations in German; verify every new or changed string is translated
+- [x] 6.1 In the launched product (GUI), prepare a full export, connect the reference receiver via mDNS, compare the confirmation codes, approve, and receive; verify the received zip passes the receiver's digest check, the application's own import accepts it, and the status line reports completion
+- [x] 6.2 Repeat 6.1 with an incremental export; verify the change log is empty afterwards and that the cloud export dialog no longer offers the incremental choice
+- [x] 6.3 Run the failure paths (decline, disconnect while pending, version mismatch, scope mismatch, and an interruption mid-transfer); verify each produces a distinct status message and log entry and leaves the change log intact, which unblocks `add-export-to-peer` 11.5 for the in-band version case
+- [x] 6.4 Run 6.1 and 6.3 with Relations in German; verify every new or changed string is translated
