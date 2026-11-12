@@ -25,3 +25,4 @@ To create a new *Release* (i.e. with adjusted version number), adjust the follow
 - features/relations.rcp.feature/feature.xml
 - features/relations.add.feature/feature.xml
 - bundles/org.elbe.relations/META-INF/MANIFEST.MF
+- bundles/org.elbe.relations/plugin.xml
