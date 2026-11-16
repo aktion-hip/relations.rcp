@@ -46,7 +46,7 @@ as identity,<br>
 &nbsp; sSubtitle&nbsp;&nbsp;&nbsp; VARCHAR(200),<br>
 &nbsp; sYear&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; VARCHAR(15),<br>
-&nbsp; sPublication&nbsp;VARCHAR(100),<br>
+&nbsp; sPublication&nbsp;VARCHAR(200),<br>
 &nbsp; sPages&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;VARCHAR(20),<br>
 &nbsp; nVolume&nbsp;&nbsp;&nbsp; &nbsp; INT,<br>
 &nbsp; nNumber&nbsp; &nbsp; &nbsp; INT,<br>
@@ -88,7 +88,6 @@ CREATE INDEX idxPerson_01 ON tblPerson(sName, sFirstname);</p>
 <p class="Code">CREATE INDEX idxPerson_02 ON tblPerson(sFrom, sTo);</p>
 
 <p class="Code"></p>
-<p class="Code"></p>
 <p class="Code">
 CREATE TABLE tblRelation (<br>
 &nbsp; RelationID&nbsp;&nbsp;BIGINT generated
@@ -112,69 +111,80 @@ CREATE INDEX idxRelation_02 ON tblRelation(nType2, nItem2);</p>
 <br>
 
 <p class="Code">
-<code>
-CREATE&nbsp;TABLE&nbsp;tblTerm&nbsp;(<br>
-&nbsp;&nbsp;TermID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIGINT&nbsp;AUTO_INCREMENT,<br>
-&nbsp;&nbsp;sTitle&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(99)&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;sText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONGTEXT,<br>
-&nbsp;&nbsp;dtCreation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;dtMutation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;PRIMARY&nbsp;KEY&nbsp;(TermID)<br>
-);<br>
-<br>
-CREATE&nbsp;INDEX&nbsp;idxTerm_01&nbsp;ON&nbsp;tblTerm(sTitle);<br>
-<br>
-CREATE&nbsp;TABLE&nbsp;tblText&nbsp;(<br>
-&nbsp;&nbsp;TextID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIGINT&nbsp;AUTO_INCREMENT,<br>
-&nbsp;&nbsp;sTitle&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(150)&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;sText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONGTEXT,<br>
-&nbsp;&nbsp;sAuthor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(100),<br>
-&nbsp;&nbsp;sCoAuthors&nbsp;&nbsp;VARCHAR(150),<br>
-&nbsp;&nbsp;sSubtitle&nbsp;&nbsp;&nbsp;VARCHAR(200),<br>
-&nbsp;&nbsp;sYear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(15),<br>
-&nbsp;&nbsp;sPublication&nbsp;VARCHAR(100),<br>
-&nbsp;&nbsp;sPages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(20),<br>
-&nbsp;&nbsp;nVolume&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INT,<br>
-&nbsp;&nbsp;nNumber&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INT,<br>
-&nbsp;&nbsp;sPublisher&nbsp;&nbsp;VARCHAR(99),<br>
-&nbsp;&nbsp;sPlace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(99),<br>
-&nbsp;&nbsp;nType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INT,<br>
-&nbsp;&nbsp;dtCreation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;dtMutation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;PRIMARY&nbsp;KEY&nbsp;(TextID)<br>
-);<br>
-<br>
-CREATE&nbsp;INDEX&nbsp;idxText_01&nbsp;ON&nbsp;tblText(sTitle);<br>
-CREATE&nbsp;INDEX&nbsp;idxText_02&nbsp;ON&nbsp;tblText(sAuthor,&nbsp;sCoAuthors);<br>
-<br>
-CREATE&nbsp;TABLE&nbsp;tblPerson&nbsp;(<br>
-&nbsp;&nbsp;PersonID&nbsp;&nbsp;&nbsp;&nbsp;BIGINT&nbsp;AUTO_INCREMENT,<br>
-&nbsp;&nbsp;sName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(99)&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;sFirstname&nbsp;&nbsp;VARCHAR(50),<br>
-&nbsp;&nbsp;sText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONGTEXT,<br>
-&nbsp;&nbsp;sFrom&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(30),<br>
-&nbsp;&nbsp;sTo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VARCHAR(30),<br>
-&nbsp;&nbsp;dtCreation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;dtMutation&nbsp;&nbsp;&nbsp;TIMESTAMP&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;PRIMARY&nbsp;KEY&nbsp;(PersonID)<br>
-);<br>
-<br>
-CREATE&nbsp;INDEX&nbsp;idxPerson_01&nbsp;ON&nbsp;tblPerson(sName,&nbsp;sFirstname);<br>
-CREATE&nbsp;INDEX&nbsp;idxPerson_02&nbsp;ON&nbsp;tblPerson(sFrom,&nbsp;sTo);<br>
-<br>
-CREATE&nbsp;TABLE&nbsp;tblRelation&nbsp;(<br>
-&nbsp;&nbsp;RelationID&nbsp;&nbsp;BIGINT&nbsp;AUTO_INCREMENT,<br>
-&nbsp;&nbsp;nType1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SMALLINT&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;nItem1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIGINT&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;nType2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SMALLINT&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;nItem2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIGINT&nbsp;not&nbsp;null,<br>
-&nbsp;&nbsp;PRIMARY&nbsp;KEY&nbsp;(RelationID)<br>
-);<br>
-<br>
-CREATE&nbsp;INDEX&nbsp;idxRelation_01&nbsp;ON&nbsp;tblRelation(nType1,&nbsp;nItem1);<br>
-CREATE&nbsp;INDEX&nbsp;idxRelation_02&nbsp;ON&nbsp;tblRelation(nType2,&nbsp;nItem2);<br>
-</code>
+CREATE TABLE `tblTerm` (<br>
+&nbsp;&nbsp;`TermID` bigint(20) NOT NULL AUTO_INCREMENT,<br>
+&nbsp;&nbsp;`sTitle` varchar(99) NOT NULL,<br>
+&nbsp;&nbsp;`sText` text DEFAULT NULL,<br>
+&nbsp;&nbsp;`dtCreation` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),<br>
+&nbsp;&nbsp;`dtMutation` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',<br>
+&nbsp;&nbsp;PRIMARY KEY (`TermID`),<br>
+&nbsp;&nbsp;KEY `idxTerm_01` (`sTitle`),<br>
+&nbsp;&nbsp;KEY `idxTerm_02` (`dtCreation`),<br>
+&nbsp;&nbsp;KEY `idxTerm_03` (`dtMutation`)<br>
+) ENGINE=InnoDB AUTO_INCREMENT=1627 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+</p>
 
+<br>
+
+<p class="Code">
+CREATE TABLE `tblText` (<br>
+&nbsp;&nbsp;`TextID` bigint(20) NOT NULL AUTO_INCREMENT,<br>
+&nbsp;&nbsp;`sTitle` varchar(150) NOT NULL,<br>
+&nbsp;&nbsp;`sText` text DEFAULT NULL,<br>
+&nbsp;&nbsp;`sAuthor` varchar(100) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sCoAuthors` varchar(150) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sSubtitle` varchar(200) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sYear` varchar(15) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sPublication` varchar(200) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sPages` varchar(20) DEFAULT NULL,<br>
+&nbsp;&nbsp;`nVolume` int(11) DEFAULT NULL,<br>
+&nbsp;&nbsp;`nNumber` int(11) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sPublisher` varchar(99) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sPlace` varchar(99) DEFAULT NULL,<br>
+&nbsp;&nbsp;`nType` int(11) DEFAULT NULL,<br>
+&nbsp;&nbsp;`dtCreation` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),<br>
+&nbsp;&nbsp;`dtMutation` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',<br>
+&nbsp;&nbsp;PRIMARY KEY (`TextID`),<br>
+&nbsp;&nbsp;KEY `idxText_01` (`sTitle`),<br>
+&nbsp;&nbsp;KEY `idxText_02` (`sAuthor`,`sCoAuthors`),<br>
+&nbsp;&nbsp;KEY `idxText_03` (`dtCreation`),<br>
+&nbsp;&nbsp;KEY `idxText_04` (`dtMutation`)<br>
+) ENGINE=InnoDB AUTO_INCREMENT=1837 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+</p>
+
+<br>
+
+<p class="Code">
+CREATE TABLE `tblPerson` (<br>
+&nbsp;&nbsp;`PersonID` bigint(20) NOT NULL AUTO_INCREMENT,<br>
+&nbsp;&nbsp;`sName` varchar(99) NOT NULL,<br>
+&nbsp;&nbsp;`sFirstname` varchar(50) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sText` text DEFAULT NULL,<br>
+&nbsp;&nbsp;`sFrom` varchar(30) DEFAULT NULL,<br>
+&nbsp;&nbsp;`sTo` varchar(30) DEFAULT NULL,<br>
+&nbsp;&nbsp;`dtCreation` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),<br>
+&nbsp;&nbsp;`dtMutation` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',<br>
+&nbsp;&nbsp;PRIMARY KEY (`PersonID`),<br>
+&nbsp;&nbsp;KEY `idxPerson_01` (`sName`,`sFirstname`),<br>
+&nbsp;&nbsp;KEY `idxPerson_02` (`sFrom`,`sTo`),<br>
+&nbsp;&nbsp;KEY `idxPerson_03` (`dtCreation`),<br>
+&nbsp;&nbsp;KEY `idxPerson_04` (`dtMutation`)<br>
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+</p>
+
+<br>
+
+<p class="Code">
+CREATE TABLE `tblRelation` (<br>
+&nbsp;&nbsp;`RelationID` bigint(20) NOT NULL AUTO_INCREMENT,<br>
+&nbsp;&nbsp;`nType1` smallint(6) NOT NULL,<br>
+&nbsp;&nbsp;`nItem1` bigint(20) NOT NULL,<br>
+&nbsp;&nbsp;`nType2` smallint(6) NOT NULL,<br>
+&nbsp;&nbsp;`nItem2` bigint(20) NOT NULL,<br>
+&nbsp;&nbsp;PRIMARY KEY (`RelationID`),<br>
+&nbsp;&nbsp;KEY `idxRelation_01` (`nType1`,`nItem1`),<br>
+&nbsp;&nbsp;KEY `idxRelation_02` (`nType2`,`nItem2`)<br>
+) ENGINE=InnoDB AUTO_INCREMENT=10059 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 </p>
 
 <br>
